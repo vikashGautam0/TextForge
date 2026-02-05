@@ -29,7 +29,9 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${jetBrainsMono.variable} antialiased`}
       >
-        <ClerkProvider>{children}</ClerkProvider>
+        <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_placeholder"}>
+          {children}
+        </ClerkProvider>
         <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
       </body>
     </html>
