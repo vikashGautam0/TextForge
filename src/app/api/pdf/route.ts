@@ -10,6 +10,7 @@ type PDFGeneratePayload = {
     author?: string;
     fontFamily?: string;
     accentColor?: string;
+    featureImage?: string; // Base64 string
 };
 
 export async function POST(request: Request) {
@@ -17,23 +18,50 @@ export async function POST(request: Request) {
         const { userId } = await auth();
         if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-        // Check user plan
-        const { data: sub } = await supabase
+        // Check user plan and usage
+        let { data: sub } = await supabase
             .from("subscriptions")
-            .select("plan_type")
+            .select("plan_type, pdf_usage_count, last_reset_date")
             .eq("user_id", userId)
             .single();
 
-        const plan = sub?.plan_type || "free";
+        let plan = sub?.plan_type || "starter";
+        let usageCount = sub?.pdf_usage_count || 0;
+        let lastReset = sub?.last_reset_date ? new Date(sub.last_reset_date) : new Date();
+
+        // Monthly Reset Logic
+        const now = new Date();
+        if (now.getMonth() !== lastReset.getMonth() || now.getFullYear() !== lastReset.getFullYear()) {
+            usageCount = 0;
+            lastReset = now; // Update the variable for the final upsert
+            await supabase
+                .from("subscriptions")
+                .update({ pdf_usage_count: 0, last_reset_date: now.toISOString() })
+                .eq("user_id", userId);
+        }
+
+        // Limit Checks
+        if ((plan === "starter" || plan === "free") && usageCount >= 10) {
+            return NextResponse.json({
+                error: "Monthly limit reached (10/10 PDFs). Upgrade to Creator for unlimited exports."
+            }, { status: 403 });
+        }
 
         const body = (await request.json()) as PDFGeneratePayload;
-        const {
+        let {
             content,
             title = "Document",
             template = "simple",
             fontFamily = "helvetica",
             accentColor = "#000000",
+            featureImage,
         } = body;
+
+        // Enforce template restrictions
+        // starter: simple or academic
+        if ((plan === "starter" || plan === "free") && template !== "simple" && template !== "academic") {
+            template = "simple";
+        }
 
         const hexToRgb = (hex: string) => {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -57,7 +85,7 @@ export async function POST(request: Request) {
         const sanitizedContent = sanitizeText(content);
         const sanitizedTitle = sanitizeText(title);
 
-        if (!sanitizedContent || sanitizedContent.trim().length === 0) {
+        if ((!sanitizedContent || sanitizedContent.trim().length === 0) && !featureImage) {
             return NextResponse.json(
                 { error: "Content is required" },
                 { status: 400 }
@@ -71,7 +99,7 @@ export async function POST(request: Request) {
         let selectedFont = StandardFonts.Helvetica;
         let selectedFontBold = StandardFonts.HelveticaBold;
 
-        if (plan !== "free") {
+        if (plan !== "starter" && plan !== "free") {
             if (fontFamily === "times-roman") {
                 selectedFont = StandardFonts.TimesRoman;
                 selectedFontBold = StandardFonts.TimesRomanBold;
@@ -135,7 +163,7 @@ export async function POST(request: Request) {
         };
 
         const theme = { ...(themes[template] || themes.simple) };
-        if (plan !== "free" && accentColor) {
+        if (plan !== "starter" && plan !== "free" && accentColor) {
             const customRgb = hexToRgb(accentColor);
             theme.accent = rgb(customRgb.r, customRgb.g, customRgb.b);
         }
@@ -215,15 +243,17 @@ export async function POST(request: Request) {
                     });
                 }
 
-                page.drawText(sanitizedTitle, {
-                    x: MARGIN,
-                    y: PAGE_HEIGHT - 60,
-                    size: 24,
-                    font: fontBold,
-                    color: headTheme.headerText || theme.primary,
-                });
+                if (plan !== "starter" && plan !== "free") {
+                    page.drawText(sanitizedTitle, {
+                        x: MARGIN,
+                        y: PAGE_HEIGHT - 60,
+                        size: 24,
+                        font: fontBold,
+                        color: headTheme.headerText || theme.primary,
+                    });
+                }
 
-                page.drawText(`Generated via TextForge • ${template.toUpperCase()}`, {
+                page.drawText(`${template.toUpperCase()}`, {
                     x: MARGIN,
                     y: PAGE_HEIGHT - 85,
                     size: 10,
@@ -237,6 +267,60 @@ export async function POST(request: Request) {
         };
 
         y = drawPageDecoration(currentPage, true);
+
+        // Embed Feature Image if present
+        if (featureImage) {
+            console.log("PDF Engine: Processing feature image...");
+            try {
+                // Remove data URL prefix if present
+                const base64Data = featureImage.replace(/^data:image\/\w+;base64,/, "");
+                const imageBytes = new Uint8Array(Buffer.from(base64Data, 'base64'));
+
+                let image;
+                // Basic detection based on standard data URL format
+                if (featureImage.toLowerCase().startsWith("data:image/png")) {
+                    console.log("PDF Engine: Detected PNG format");
+                    image = await pdfDoc.embedPng(imageBytes);
+                } else if (featureImage.toLowerCase().startsWith("data:image/jpeg") || featureImage.toLowerCase().startsWith("data:image/jpg")) {
+                    console.log("PDF Engine: Detected JPEG format");
+                    image = await pdfDoc.embedJpg(imageBytes);
+                } else {
+                    console.log("PDF Engine: Unknown prefix, attempting auto-detect...");
+                    // Start of logic to attempt png then jpg if no prefix found or other format
+                    try {
+                        image = await pdfDoc.embedPng(imageBytes);
+                    } catch {
+                        image = await pdfDoc.embedJpg(imageBytes);
+                    }
+                }
+
+                if (image) {
+                    console.log("PDF Engine: Image embedded successfully, drawing...");
+                    // Scale image to fit within margins
+                    const maxImageHeight = 250;
+                    const maxImageWidth = CONTENT_WIDTH; // Use the full content width
+                    const imageDims = image.scaleToFit(maxImageWidth, maxImageHeight);
+
+                    // Center the image
+                    const xOffset = MARGIN + (CONTENT_WIDTH - imageDims.width) / 2;
+
+                    currentPage.drawImage(image, {
+                        x: xOffset,
+                        y: y - imageDims.height - 20, // Add some padding below header
+                        width: imageDims.width,
+                        height: imageDims.height,
+                    });
+
+                    y -= (imageDims.height + 40); // Update Y position for text
+                } else {
+                    console.warn("PDF Engine: Image processing completed but no image object created");
+                }
+
+            } catch (e) {
+                console.error("PDF Engine: Failed to embed feature image", e);
+                // Continue without image if it fails
+            }
+        }
 
         // Helper for text wrapping & pagination with basic syntax highlighting
         const drawWrappedText = (text: string, options: {
@@ -298,7 +382,6 @@ export async function POST(request: Request) {
                     const finalX = xPos + currentIndent;
 
                     if (y < MARGIN + 60) {
-                        if (plan === "free" && pdfDoc.getPageCount() >= 3) return; // Hard limit for free users
                         currentPage = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
                         y = drawPageDecoration(currentPage, false);
                     }
@@ -428,7 +511,6 @@ export async function POST(request: Request) {
 
                 // Check for page break
                 if (y < MARGIN + 40) {
-                    if (plan === "free" && pdfDoc.getPageCount() >= 3) break; // Hard limit for free users
                     currentPage = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
                     y = drawPageDecoration(currentPage, false);
                 }
@@ -441,15 +523,15 @@ export async function POST(request: Request) {
         const pages = pdfDoc.getPages();
         pages.forEach((page, idx) => {
             // Add watermark for free users
-            if (plan === "free") {
-                page.drawText("Generated by TextForge Studio — FREE VERSION", {
-                    x: PAGE_WIDTH / 2 - 180,
-                    y: PAGE_HEIGHT / 2 - 100,
-                    size: 40,
-                    font: fontBold,
-                    color: rgb(0.8, 0.8, 0.8),
-                    opacity: 0.1,
-                    rotate: degrees(45),
+            // Add watermark for free users
+            if (plan === "starter" || plan === "free") {
+                page.drawText("TextForge Starter", {
+                    x: 20,
+                    y: 20,
+                    size: 8,
+                    font: font,
+                    color: rgb(0.6, 0.6, 0.6),
+                    opacity: 0.6,
                 });
             }
 
@@ -461,6 +543,16 @@ export async function POST(request: Request) {
                 color: template === "code" ? rgb(0.5, 0.4, 0.6) : theme.secondary,
             });
         });
+
+        // Increment usage count (using upsert to handle new users)
+        await supabase
+            .from("subscriptions")
+            .upsert({
+                user_id: userId,
+                pdf_usage_count: usageCount + 1,
+                plan_type: plan,
+                last_reset_date: lastReset.toISOString()
+            }, { onConflict: 'user_id' });
 
         // Generate and Return PDF
         const pdfBytes = await pdfDoc.save();

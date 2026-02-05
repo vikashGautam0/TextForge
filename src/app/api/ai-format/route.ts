@@ -34,12 +34,11 @@ export async function POST(req: Request) {
             .eq("user_id", userId)
             .single();
 
-        const plan = sub?.plan_type || "free";
-        const usageCount = sub?.ai_usage_count || 0;
+        const plan = sub?.plan_type || "starter";
 
-        if (plan === "free" && usageCount >= 5) {
+        if (plan === "starter" || plan === "free") {
             return NextResponse.json({
-                error: "Monthly AI limit reached (5/5). Upgrade to Starter for unlimited AI formatting."
+                error: "AI formatting is not available on the Starter plan. Upgrade to Creator to unlock AI features."
             }, { status: 403 });
         }
 
@@ -73,8 +72,7 @@ Rules:
 - Use semantic HTML tags (h1, h2, h3, p, ul, ol, li, blockquote, etc.)
 - Identify and format headings appropriately
 - Break long paragraphs into readable chunks
-- Add proper spacing and structure
-- Detect lists and format them correctly
+${plan === "pro" || plan === "business" ? "- Add advanced structure (bullets, tables, professional sections)\n- Optimize for premium print layout" : "- Basic structure and spacing"}
 - Maintain the target template style: ${template}
 - Tone: ${tone}
 - Return ONLY the formatted HTML body content, no <html>, <head>, or <body> tags
@@ -128,13 +126,11 @@ Rules:
             );
         }
 
-        // Increment AI usage count for free users
-        if (plan === "free") {
-            await supabase
-                .from("subscriptions")
-                .upsert({ user_id: userId, ai_usage_count: usageCount + 1 })
-                .eq("user_id", userId);
-        }
+        // Increment AI usage count
+        await supabase
+            .from("subscriptions")
+            .upsert({ user_id: userId, ai_usage_count: (sub?.ai_usage_count || 0) + 1 })
+            .eq("user_id", userId);
 
         return NextResponse.json({
             success: true,

@@ -21,7 +21,7 @@ export async function GET() {
             return NextResponse.json({ error: "Database error" }, { status: 500 });
         }
 
-        return NextResponse.json(subscription || { plan_type: "free", status: "none" });
+        return NextResponse.json(subscription || { plan_type: "starter", status: "none", pdf_usage_count: 0 });
     } catch (error) {
         console.error("[SUBSCRIPTION_GET_ERROR]", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

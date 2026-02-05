@@ -13,16 +13,28 @@ export const razorpay = new Razorpay({
 });
 
 export const RAZOR_PLANS = {
-    starter: {
-        planId: process.env.RAZORPAY_STARTER_PLAN_ID || "plan_placeholder_1",
-        name: "Starter",
-        amount: 250000, // Amount in paise (e.g., ₹2500)
-        limit: 50,
+    creator: {
+        planId: process.env.RAZORPAY_CREATOR_PLAN_ID || "plan_creator_id",
+        name: "Creator",
+        amount: 14900, // ₹149 in paise
+        limit: 999999, // Unlimited
     },
-    team: {
-        planId: process.env.RAZORPAY_TEAM_PLAN_ID || "plan_placeholder_2",
-        name: "Team",
-        amount: 650000, // ₹6500
-        limit: 500,
+    pro: {
+        planId: process.env.RAZORPAY_PRO_PLAN_ID || "plan_pro_id",
+        name: "Pro Editor",
+        amount: 39900, // ₹399 in paise
+        limit: 999999,
     },
+    business: {
+        planId: process.env.RAZORPAY_BUSINESS_PLAN_ID || "plan_business_id",
+        name: "Business",
+        amount: 119900, // ₹1199 in paise
+        limit: 999999,
+    },
+    lifetime: {
+        planId: process.env.RAZORPAY_LIFETIME_PLAN_ID || "plan_lifetime_id",
+        name: "Lifetime",
+        amount: 199900, // ₹1,999 one-time
+        limit: 999999,
+    }
 };

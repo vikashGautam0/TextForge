@@ -132,7 +132,7 @@ export default function Home() {
         </div>
         <nav className="hidden items-center gap-8 text-slate-500 font-medium md:flex">
           <a href="#features" className="hover:text-slate-900 transition-colors">Features</a>
-          <a href="#templates" className="hover:text-slate-900 transition-colors">Templates</a>
+          <Link href="/templates" className="hover:text-slate-900 transition-colors">Templates</Link>
           <a href="#pricing" className="hover:text-slate-900 transition-colors">Pricing</a>
         </nav>
         <div className="flex items-center gap-4">
@@ -199,94 +199,21 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="relative group animate-float">
-            {/* Pulsing "AI Active" Floating Badge */}
-            <div className="absolute -left-4 -top-4 z-20 flex items-center gap-2 rounded-2xl bg-white p-3 shadow-2xl shadow-blue-500/20">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 animate-pulse">
-                <span className="text-sm">🪄</span>
-              </div>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-tight text-slate-400">AI Engine</p>
-                <p className="text-xs font-bold text-slate-900">Formatting...</p>
-              </div>
-            </div>
-
-            {/* Main Preview Card */}
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white/90 p-6 shadow-2xl shadow-slate-200/60 backdrop-blur-md">
-              {/* Scanning Line Effect */}
-              <div className="animate-scan" />
-
+          {/* Premium Hero Image with Glassmorphism */}
+          <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-2xl transition hover:scale-[1.01] duration-500 group">
+            <img
+              src="https://plus.unsplash.com/premium_photo-1678566153919-86c4ba4216f1?w=800&auto=format&fit=crop&q=80"
+              alt="Modern Document Design"
+              className="w-full h-[400px] object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-60" />
+            <div className="absolute bottom-6 left-6 right-6 rounded-2xl bg-white/40 p-4 backdrop-blur-xl border border-white/40 shadow-xl">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
-                  Live Preview
-                </p>
-                <span className="rounded-full bg-emerald-100 px-3 py-1.5 text-[10px] font-bold uppercase tracking-tight text-emerald-700">
-                  Export ready
-                </span>
-              </div>
-
-              <div className="mt-8 space-y-5">
-                {/* Header Skeleton */}
-                <div className="h-4 w-2/3 rounded-full bg-slate-100 animate-pulse" />
-
-                {/* Visual Chart Mockup */}
-                <div className="relative h-24 rounded-3xl bg-gradient-to-br from-slate-50 via-white to-slate-100 p-4 border border-slate-50">
-                  <div className="flex h-full items-end gap-1.5">
-                    {[40, 70, 45, 90, 60, 80, 50].map((h, i) => (
-                      <div
-                        key={i}
-                        className="flex-1 rounded-t-lg bg-slate-900 animate-grow-bar"
-                        style={{
-                          height: `${h}%`,
-                          opacity: 0.1 + (i * 0.15),
-                          animationDelay: `${i * 100}ms`
-                        }}
-                      />
-                    ))}
-                  </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-900">Live Engine</p>
+                  <p className="text-xs font-semibold text-slate-800">Processing Document Structure...</p>
                 </div>
-
-                {/* Field Mockups */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2 rounded-2xl border border-slate-50 bg-slate-50/50 p-3">
-                    <div className="h-1.5 w-1/2 rounded-full bg-slate-200" />
-                    <div className="h-3 w-3/4 rounded-full bg-slate-300/50 animate-pulse" />
-                  </div>
-                  <div className="space-y-2 rounded-2xl border border-slate-50 bg-slate-50/50 p-3">
-                    <div className="h-1.5 w-1/2 rounded-full bg-slate-200" />
-                    <div className="h-3 w-full rounded-full bg-slate-300/50 animate-pulse" />
-                  </div>
-                </div>
-
-                {/* Brand / Metadata Block (Ray.so Style) */}
-                <div className="rounded-3xl bg-[#0d1117] p-5 text-white shadow-xl transition-transform duration-500 hover:scale-[1.02]">
-                  <div className="flex h-full flex-col justify-between gap-3">
-                    <div className="flex items-center justify-between">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Document Meta</p>
-                      {/* Mini Avatar Group */}
-                      <div className="flex -space-x-2">
-                        {[1, 2, 3].map(i => (
-                          <div key={i} className="h-5 w-5 rounded-full border-2 border-[#0d1117] bg-slate-900 overflow-hidden">
-                            <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-800" />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold">Brand: Atlas Labs</p>
-                      <p className="text-[11px] text-slate-400">
-                        Tone: crisp, executive, data-forward
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Context</p>
-                  <p className="mt-1 text-xs text-slate-500 italic">
-                    “Summarize Q4 metrics and highlight pipeline risk.”
-                  </p>
-                </div>
+                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               </div>
             </div>
           </div>
@@ -385,56 +312,130 @@ export default function Home() {
           ))}
         </section>
 
-        <section id="pricing" className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-2xl border border-slate-200 bg-white/70 p-6">
-            <p className="text-xs font-semibold uppercase text-slate-500">
-              Starter
-            </p>
-            <p className="mt-3 text-3xl font-semibold text-slate-900">₹2,500</p>
-            <p className="mt-1 text-sm text-slate-600">Per owner / month</p>
-            <p className="mt-4 text-sm text-slate-600">
-              50 PDFs, 4 templates, basic branding.
-            </p>
-            <button
-              onClick={() => handleCheckout('starter')}
-              className="mt-6 inline-flex w-full justify-center rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-300"
+        <section id="pricing" className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {/* Starter Plan */}
+          <div className="flex flex-col rounded-3xl border border-slate-200 bg-white/70 p-6 transition hover:shadow-xl">
+            <div className="flex-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Starter</p>
+              <p className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-slate-900">₹0</span>
+                <span className="text-sm text-slate-500">/mo</span>
+              </p>
+              <ul className="mt-6 space-y-3 text-xs text-slate-600">
+                <li className="flex gap-2">✅ <span>10 PDFs / month</span></li>
+                <li className="flex gap-2">✅ <span>Basic formatting</span></li>
+                <li className="flex gap-2">✅ <span>1 basic template</span></li>
+                <li className="flex gap-2 font-medium text-amber-600 italic">⚠️ Watermark enabled</li>
+                <li className="flex gap-2 text-slate-400">❌ No AI formatting</li>
+              </ul>
+            </div>
+            <Link
+              href="/dashboard"
+              className="mt-8 inline-flex w-full justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-slate-700"
             >
-              Start trial
+              Get Started
+            </Link>
+          </div>
+
+          {/* Creator Plan */}
+          <div className="flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-xl">
+            <div className="flex-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-blue-600">Creator</p>
+              <p className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-slate-900">₹149</span>
+                <span className="text-sm text-slate-500">/mo</span>
+              </p>
+              <ul className="mt-6 space-y-3 text-xs text-slate-600">
+                <li className="flex gap-2">✅ <span>Unlimited PDFs</span></li>
+                <li className="flex gap-2">✅ <span>5 premium templates</span></li>
+                <li className="flex gap-2">✅ <span>AI basic formatting</span></li>
+                <li className="flex gap-2">✅ <span>No watermark</span></li>
+                <li className="flex gap-2">✅ <span>History unlocked</span></li>
+              </ul>
+            </div>
+            <button
+              onClick={() => handleCheckout('creator')}
+              className="mt-8 inline-flex w-full justify-center rounded-xl border-2 border-slate-900 px-4 py-2 text-sm font-bold text-slate-900 transition hover:bg-slate-900 hover:text-white"
+            >
+              Go Creator
             </button>
           </div>
-          <div className="rounded-2xl border border-slate-900 bg-slate-900 p-6 text-white shadow-xl">
-            <p className="text-xs font-semibold uppercase text-amber-300">
-              Team
-            </p>
-            <p className="mt-3 text-3xl font-semibold">₹6,500</p>
-            <p className="mt-1 text-sm text-slate-200">
-              Per owner / month
-            </p>
-            <p className="mt-4 text-sm text-slate-200">
-              500 PDFs, unlimited templates, brand kits.
-            </p>
+
+          {/* Pro Plan */}
+          <div className="relative flex flex-col rounded-3xl border-2 border-slate-900 bg-slate-900 p-6 text-white shadow-2xl transition hover:scale-[1.02]">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-amber-300 px-3 py-1 text-[10px] font-bold uppercase tracking-tight text-slate-900">
+              Most Popular
+            </div>
+            <div className="flex-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-amber-300">Pro Editor</p>
+              <p className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-white">₹399</span>
+                <span className="text-sm text-slate-400">/mo</span>
+              </p>
+              <ul className="mt-6 space-y-3 text-xs text-slate-300">
+                <li className="flex gap-2">✅ <span>Everything in Creator</span></li>
+                <li className="flex gap-2">✅ <span>15+ Premium templates</span></li>
+                <li className="flex gap-2">✅ <span>Advanced AI formatting</span></li>
+                <li className="flex gap-2">✅ <span>Custom branding</span></li>
+                <li className="flex gap-2">✅ <span>Priority Support</span></li>
+              </ul>
+            </div>
             <button
-              onClick={() => handleCheckout('team')}
-              className="mt-6 inline-flex w-full justify-center rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-100"
+              onClick={() => handleCheckout('pro')}
+              className="mt-8 inline-flex w-full justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-slate-900 transition hover:bg-slate-100"
             >
-              Get started
+              Upgrade to Pro
             </button>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white/70 p-6">
-            <p className="text-xs font-semibold uppercase text-slate-500">
-              Enterprise
-            </p>
-            <p className="mt-3 text-3xl font-semibold text-slate-900">Custom</p>
-            <p className="mt-1 text-sm text-slate-600">Annual contract</p>
-            <p className="mt-4 text-sm text-slate-600">
-              Dedicated support, SSO, SLAs, audit logs.
-            </p>
-            <a
-              href="mailto:founders@textforge.com"
-              className="mt-6 inline-flex w-full justify-center rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-300"
+
+          {/* Business Plan */}
+          <div className="flex flex-col rounded-3xl border border-slate-200 bg-white/70 p-6 transition hover:shadow-xl">
+            <div className="flex-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Business</p>
+              <p className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-slate-900">₹1199</span>
+                <span className="text-sm text-slate-500">/mo</span>
+              </p>
+              <ul className="mt-6 space-y-3 text-xs text-slate-600">
+                <li className="flex gap-2">✅ <span>Everything in Pro</span></li>
+                <li className="flex gap-2">✅ <span>Team accounts (5)</span></li>
+                <li className="flex gap-2">✅ <span>Unlimited API access</span></li>
+                <li className="flex gap-2">✅ <span>Workflow automation</span></li>
+                <li className="flex gap-2">✅ <span>SLA Support</span></li>
+              </ul>
+            </div>
+            <button
+              onClick={() => handleCheckout('business')}
+              className="mt-8 inline-flex w-full justify-center rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-300 transition"
             >
-              Contact sales
-            </a>
+              Contact Team
+            </button>
+          </div>
+
+          {/* Lifetime Plan */}
+          <div className="flex flex-col rounded-3xl border border-slate-200 bg-gradient-to-br from-indigo-50 to-white p-6 transition hover:shadow-xl">
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-600">Lifetime</p>
+                <span className="rounded bg-indigo-100 px-1.5 py-0.5 text-[8px] font-bold text-indigo-700">LIMITED</span>
+              </div>
+              <p className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-slate-900">₹1,999</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase">One-time</span>
+              </p>
+              <ul className="mt-6 space-y-3 text-xs text-slate-600">
+                <li className="flex gap-2">✅ <span>Creator Plan Forever</span></li>
+                <li className="flex gap-2">✅ <span>No monthly renewal</span></li>
+                <li className="flex gap-2">✅ <span>Future Basic templates</span></li>
+                <li className="flex gap-2">✅ <span>Legacy Support</span></li>
+              </ul>
+            </div>
+            <button
+              onClick={() => handleCheckout('lifetime')}
+              className="mt-8 inline-flex w-full justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-indigo-700 shadow-lg shadow-indigo-100"
+            >
+              Buy Lifetime
+            </button>
           </div>
         </section>
 
@@ -453,6 +454,21 @@ export default function Home() {
             Launch the generator
           </Link>
         </section>
+        <footer className="mt-20 border-t border-slate-100 py-12">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-2">
+              <div className="h-6 w-6 rounded bg-slate-900 text-[10px] font-bold text-white flex items-center justify-center">TF</div>
+              <p className="text-sm font-bold text-slate-900 uppercase tracking-widest leading-none mt-1">TextForge</p>
+            </div>
+            <div className="flex gap-8 text-xs font-semibold text-slate-500">
+              <Link href="/templates" className="hover:text-slate-900 transition font-bold">Templates</Link>
+              <Link href="/api-docs" className="hover:text-slate-900 transition font-bold">API Docs</Link>
+              <Link href="/terms" className="hover:text-slate-900 transition">Terms</Link>
+              <Link href="/privacy" className="hover:text-slate-900 transition">Privacy</Link>
+            </div>
+            <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">&copy; 2026 Studio Inc.</p>
+          </div>
+        </footer>
       </main>
     </div>
   );

@@ -26,8 +26,10 @@ CREATE TABLE subscriptions (
   stripe_price_id TEXT,
   stripe_current_period_end TIMESTAMP WITH TIME ZONE,
   status TEXT, -- 'active', 'canceled', 'incomplete', etc.
-  plan_type TEXT DEFAULT 'free', -- 'free', 'starter', 'team'
-  ai_usage_count INTEGER DEFAULT 0, -- Tracks AI formatting usage
+  plan_type TEXT DEFAULT 'starter', -- 'starter', 'creator', 'pro', 'business', 'lifetime'
+  ai_usage_count INTEGER DEFAULT 0, 
+  pdf_usage_count INTEGER DEFAULT 0, -- Tracks monthly PDF generation
+  last_reset_date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()), -- For monthly usage reset
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );

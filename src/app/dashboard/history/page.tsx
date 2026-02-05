@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { useUser } from "@clerk/nextjs";
 
 interface HistoryItem {
     id: string;
@@ -14,18 +15,34 @@ interface HistoryItem {
 }
 
 export default function HistoryPage() {
+    const { user } = useUser();
     const [history, setHistory] = useState<HistoryItem[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [subscription, setSubscription] = useState<any>(null);
 
     useEffect(() => {
         const fetchHistory = async () => {
-            const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+            if (!user?.id) return;
 
-            const { data, error } = await supabase
+            // Fetch Subscription for retention logic
+            const subRes = await fetch("/api/subscription");
+            const subData = await subRes.json();
+            setSubscription(subData);
+
+            const plan = subData?.plan_type || "starter";
+            const query = supabase
                 .from('pdf_history')
                 .select('*')
-                .gt('created_at', twentyFourHoursAgo)
+                .eq('user_id', user.id)
                 .order('created_at', { ascending: false });
+
+            // Retention logic: Starter/Free only gets 24 hours
+            if (plan === "starter" || plan === "free") {
+                const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+                query.gt('created_at', twentyFourHoursAgo);
+            }
+
+            const { data, error } = await query;
 
             if (!error && data) {
                 const mappedData: HistoryItem[] = data.map(item => ({
@@ -55,8 +72,8 @@ export default function HistoryPage() {
             setIsLoaded(true);
         };
 
-        fetchHistory();
-    }, []);
+        if (user?.id) fetchHistory();
+    }, [user]);
 
     const deleteItem = async (id: string) => {
         const newHistory = history.filter(item => item.id !== id);
@@ -64,15 +81,15 @@ export default function HistoryPage() {
         localStorage.setItem("pdf-history", JSON.stringify(newHistory));
 
         // Also delete from Supabase
-        await supabase.from('pdf_history').delete().eq('id', id);
+        await supabase.from('pdf_history').delete().eq('id', id).eq('user_id', user?.id);
     };
 
     const clearHistory = async () => {
+        if (!user?.id) return;
         if (confirm("Are you sure you want to clear all history? This will also remove cloud backups.")) {
             setHistory([]);
             localStorage.removeItem("pdf-history");
-            // Clear from Supabase (demo simplicity - in real app would be user-specific)
-            await supabase.from('pdf_history').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+            await supabase.from('pdf_history').delete().eq('user_id', user.id);
         }
     };
 

@@ -141,6 +141,7 @@ export default function TemplatePicker({
                     return (
                         <button
                             key={template.id}
+                            type="button"
                             onClick={() => onSelect(template.id)}
                             onMouseEnter={() => setHoveredId(template.id)}
                             onMouseLeave={() => setHoveredId(null)}

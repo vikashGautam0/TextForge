@@ -5,7 +5,7 @@ import Link from "next/link";
 import Editor from "@/components/Editor";
 import TemplatePicker, { type TemplateType } from "@/components/TemplatePicker";
 import { supabase } from "@/lib/supabase";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 
 export default function DashboardPage() {
@@ -17,6 +17,7 @@ export default function DashboardPage() {
 }
 
 function DashboardPageContent() {
+  const { user } = useUser();
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("Untitled Document");
   const [template, setTemplate] = useState<TemplateType>("simple");
@@ -30,7 +31,9 @@ function DashboardPageContent() {
   const [subscription, setSubscription] = useState<any>(null);
   const [exportCount, setExportCount] = useState(0);
   const [fontFamily, setFontFamily] = useState("helvetica");
+
   const [accentColor, setAccentColor] = useState("#0f172a");
+  const [featureImage, setFeatureImage] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
 
@@ -51,7 +54,7 @@ function DashboardPageContent() {
 
     fetchSubscription();
     fetchExportCount();
-  }, []);
+  }, [user]);
 
   const fetchSubscription = async () => {
     try {
@@ -64,10 +67,12 @@ function DashboardPageContent() {
   };
 
   const fetchExportCount = async () => {
+    if (!user?.id) return;
     try {
       const { count } = await supabase
         .from("pdf_history")
-        .select("*", { count: "exact", head: true });
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id);
       setExportCount(count || 0);
     } catch (err) {
       console.error("Failed to fetch export count", err);
@@ -78,7 +83,7 @@ function DashboardPageContent() {
   useEffect(() => {
     const generatePreview = async () => {
       const contentToUse = formattedHTML || content;
-      if (!contentToUse.trim()) return;
+      if (!contentToUse.trim() && !featureImage) return;
 
       setIsPreviewLoading(true);
       try {
@@ -91,8 +96,13 @@ function DashboardPageContent() {
             template,
             fontFamily,
             accentColor,
+            featureImage,
           }),
         });
+
+        if (featureImage) {
+          console.log("Dashboard: Sending feature image to PDF engine. Base64 length:", featureImage.length);
+        }
 
         if (response.ok) {
           const blob = await response.blob();
@@ -117,7 +127,7 @@ function DashboardPageContent() {
 
     const timer = setTimeout(generatePreview, 1000); // 1s debounce
     return () => clearTimeout(timer);
-  }, [content, formattedHTML, template, title, fontFamily, accentColor]);
+  }, [content, formattedHTML, template, title, fontFamily, accentColor, featureImage]);
 
   // AI Format Handler
   const handleAIFormat = async (task: "format" | "summarize" | "expand" | "refine" = "format") => {
@@ -155,24 +165,52 @@ function DashboardPageContent() {
     }
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      console.log("Dashboard: Image selected:", file.name, file.size, file.type);
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        setError("Image size too large (max 5MB)");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadstart = () => console.log("Dashboard: Reading image file...");
+      reader.onloadend = () => {
+        console.log("Dashboard: Image read complete. Updating state.");
+        setFeatureImage(reader.result as string);
+        setSuccess("Image uploaded successfully! Generating updated preview...");
+        setTimeout(() => setSuccess(""), 3000);
+      };
+      reader.onerror = () => {
+        console.error("Dashboard: FileReader error");
+        setError("Failed to read image file");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // PDF Generation Handler
   const handleGeneratePDF = async () => {
     const contentToUse = formattedHTML || content;
 
     // Plan-based Limits
     const planLimits: Record<string, number> = {
-      free: 5,
-      starter: 50,
-      team: 500,
+      free: 10,
+      starter: 10,
+      creator: 999999,
+      pro: 999999,
+      business: 999999,
+      lifetime: 999999,
     };
-    const currentLimit = planLimits[subscription?.plan_type || "free"];
+    const currentPlan = subscription?.plan_type || "starter";
+    const currentLimit = planLimits[currentPlan];
 
     if (exportCount >= currentLimit) {
-      setError(`You've reached the limit for the ${subscription?.plan_type || "Free"} plan (${currentLimit} exports). Please upgrade to continue.`);
+      setError(`You've reached the monthly limit for the ${currentPlan === "starter" ? "Starter" : currentPlan} plan (${currentLimit} exports). Please upgrade to continue.`);
       return;
     }
 
-    if (!contentToUse.trim()) {
+    if (!contentToUse.trim() && !featureImage) {
       setError("Please add content before generating PDF");
       return;
     }
@@ -190,7 +228,9 @@ function DashboardPageContent() {
           template,
           includeHeaderFooter: true,
           fontFamily,
+
           accentColor,
+          featureImage,
         }),
       });
 
@@ -207,6 +247,7 @@ function DashboardPageContent() {
       document.body.appendChild(link);
       link.click();
       link.remove();
+      window.URL.revokeObjectURL(url); // Prevent memory leak
 
       // Save to History (localStorage)
       const historyItem = {
@@ -222,14 +263,18 @@ function DashboardPageContent() {
       localStorage.setItem("pdf-history", JSON.stringify([historyItem, ...existingHistory]));
 
       // Save to Supabase (Cloud Sync)
-      supabase.from('pdf_history').insert([{
-        title: historyItem.title,
-        template: historyItem.template,
-        content_preview: historyItem.contentPreview,
-        char_count: historyItem.charCount,
-      }]).then(({ error }) => {
-        if (error) console.error("Cloud sync failed:", error);
-      });
+      if (user?.id) {
+        supabase.from('pdf_history').insert([{
+          user_id: user.id,
+          title: historyItem.title,
+          template: historyItem.template,
+          content_preview: historyItem.contentPreview,
+          char_count: historyItem.charCount,
+        }]).then(({ error }) => {
+          if (error) console.error("Cloud sync failed:", error);
+          fetchExportCount(); // Refresh count
+        });
+      }
 
       // Success feedback
       setError("");
@@ -271,11 +316,26 @@ function DashboardPageContent() {
               </div>
             </div>
 
+            {/* Resources */}
+            <div className="space-y-4">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Resources</p>
+              <div className="space-y-2">
+                <Link href="/templates" className="flex w-full items-center gap-3 rounded-xl p-3 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-white border border-slate-200 text-xs">🎨</span>
+                  Templates
+                </Link>
+                <Link href="/api-docs" className="flex w-full items-center gap-3 rounded-xl p-3 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-white border border-slate-200 text-xs">🔌</span>
+                  API Docs
+                </Link>
+              </div>
+            </div>
+
             {/* Account & Billing */}
             <div className="space-y-4">
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Account & Billing</p>
               <div className="space-y-2">
-                {subscription?.plan_type && subscription?.plan_type !== 'free' ? (
+                {(subscription?.plan_type && subscription?.plan_type !== 'starter' && subscription?.plan_type !== 'free') ? (
                   <Link
                     href="/user-profile"
                     className="flex w-full items-center gap-3 rounded-xl p-3 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50"
@@ -286,7 +346,7 @@ function DashboardPageContent() {
                 ) : (
                   <Link href="/#pricing" className="flex w-full items-center gap-3 rounded-xl bg-amber-50 p-3 text-left text-sm font-semibold text-amber-700 ring-1 ring-amber-100 transition hover:bg-amber-100">
                     <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-amber-500 text-[10px] text-white">⭐</span>
-                    Upgrade to Pro
+                    Upgrade Plan
                   </Link>
                 )}
               </div>
@@ -303,11 +363,15 @@ function DashboardPageContent() {
                   <button
                     key={action.task}
                     onClick={() => handleAIFormat(action.task as any)}
-                    disabled={isFormatting || !content.trim()}
+                    disabled={isFormatting || !content.trim() || ["free", "starter"].includes(subscription?.plan_type || "starter")}
                     className="group flex items-center justify-between rounded-xl px-4 py-2 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 disabled:opacity-50"
                   >
                     <span>{action.icon} {action.label}</span>
-                    <span className="opacity-0 transition group-hover:opacity-100 text-[10px]">✨</span>
+                    {["free", "starter"].includes(subscription?.plan_type || "starter") ? (
+                      <span className="text-[10px] text-amber-500 font-bold">PRO</span>
+                    ) : (
+                      <span className="opacity-0 transition group-hover:opacity-100 text-[10px]">✨</span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -347,12 +411,16 @@ function DashboardPageContent() {
               <div className="flex items-center gap-3">
                 <div className="rounded-full bg-slate-100 px-4 py-1.5 text-[10px] font-bold uppercase tracking-wide text-slate-600">
                   <span className="text-slate-900">
-                    {Math.max(0, (subscription?.plan_type === 'team' ? 500 : subscription?.plan_type === 'starter' ? 50 : 5) - exportCount)}
-                  </span> Exports Remaining
+                    {(() => {
+                      const plan = subscription?.plan_type || "starter";
+                      if (plan === "starter" || plan === "free") return Math.max(0, 10 - exportCount);
+                      return "∞";
+                    })()}
+                  </span> {subscription?.plan_type === "starter" || subscription?.plan_type === "free" ? "Exports Remaining" : "Unlimited Exports"}
                 </div>
-                {subscription?.plan_type && subscription?.plan_type !== 'free' && (
+                {subscription?.plan_type && !["free", "starter"].includes(subscription.plan_type) && (
                   <div className="rounded-full bg-amber-100 px-3 py-1.5 text-[10px] font-bold uppercase tracking-tight text-amber-600">
-                    Premium: {subscription.plan_type}
+                    Premium: {subscription.plan_type.toUpperCase()}
                   </div>
                 )}
                 <UserButton afterSignOutUrl="/" />
@@ -399,9 +467,9 @@ function DashboardPageContent() {
                   <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-white">🎨</span>
                   <h3 className="text-sm font-bold uppercase tracking-widest text-slate-900">Brand Identity</h3>
                 </div>
-                {subscription?.plan_type === 'free' && (
+                {(subscription?.plan_type === 'free' || subscription?.plan_type === 'starter') && (
                   <Link href="/#pricing" className="rounded-full bg-amber-100 px-3 py-1 text-[10px] font-bold text-amber-600 transition hover:bg-amber-200">
-                    ✨ UNLOCK PRO
+                    ✨ UNLOCK BRAND KIT
                   </Link>
                 )}
               </div>
@@ -416,7 +484,7 @@ function DashboardPageContent() {
                   <select
                     value={fontFamily}
                     onChange={(e) => setFontFamily(e.target.value)}
-                    disabled={subscription?.plan_type === 'free'}
+                    disabled={subscription?.plan_type === 'free' || subscription?.plan_type === 'starter'}
                     className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 outline-none ring-slate-900 transition focus:ring-2 disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     <option value="helvetica">Inter / Helvetica</option>
@@ -437,7 +505,7 @@ function DashboardPageContent() {
                         type="color"
                         value={accentColor}
                         onChange={(e) => setAccentColor(e.target.value)}
-                        disabled={subscription?.plan_type === 'free'}
+                        disabled={subscription?.plan_type === 'free' || subscription?.plan_type === 'starter'}
                         className="absolute -inset-2 h-[150%] w-[150%] cursor-pointer border-none bg-transparent disabled:cursor-not-allowed"
                       />
                     </div>
@@ -445,13 +513,16 @@ function DashboardPageContent() {
                       type="text"
                       value={accentColor.toUpperCase()}
                       onChange={(e) => setAccentColor(e.target.value)}
-                      disabled={subscription?.plan_type === 'free'}
+                      disabled={subscription?.plan_type === 'free' || subscription?.plan_type === 'starter'}
                       placeholder="#000000"
                       className="flex-1 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm font-mono font-bold text-slate-900 outline-none ring-slate-900 transition focus:ring-2 disabled:cursor-not-allowed disabled:opacity-40"
                     />
                   </div>
                 </div>
               </div>
+
+              {/* Feature Image Selection */}
+
             </div>
 
             {/* Main Content Area */}
@@ -464,7 +535,7 @@ function DashboardPageContent() {
                   </h2>
                   <button
                     onClick={() => handleAIFormat("format")}
-                    disabled={isFormatting || !content.trim()}
+                    disabled={isFormatting || !content.trim() || ["free", "starter"].includes(subscription?.plan_type || "starter")}
                     className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isFormatting ? (
@@ -499,7 +570,7 @@ function DashboardPageContent() {
                             d="M13 10V3L4 14h7v7l9-11h-7z"
                           />
                         </svg>
-                        AI Format
+                        {["free", "starter"].includes(subscription?.plan_type || "starter") ? "AI Format (PRO)" : "AI Format"}
                       </>
                     )}
                   </button>
@@ -522,6 +593,36 @@ This is a paragraph with some important information.
 - Second point
 - Third point"
                 />
+
+                {/* Feature Image Selection (Moved here) */}
+                <div className="space-y-3 pt-4 border-t border-slate-100">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-tight">Feature Image</label>
+                    <span className="text-[10px] text-slate-400">JPG / PNG (Max 5MB)</span>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    {featureImage && (
+                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-slate-200">
+                        <img src={featureImage} alt="Preview" className="h-full w-full object-cover" />
+                        <button
+                          onClick={() => setFeatureImage(null)}
+                          className="absolute top-0 right-0 bg-slate-900/50 text-white p-0.5 rounded-bl-md hover:bg-red-500/80 transition"
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                      </div>
+                    )}
+
+                    <label className="cursor-pointer flex items-center gap-2 rounded-xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-600 border border-slate-200 hover:bg-white hover:border-slate-300 transition dashed-border w-full justify-center">
+                      <input type="file" accept="image/png, image/jpeg" onChange={handleImageUpload} className="hidden" />
+                      <span className="flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        {featureImage ? "Change Image" : "Upload Image"}
+                      </span>
+                    </label>
+                  </div>
+                </div>
               </div>
 
               {/* Right: Preview */}
@@ -532,7 +633,7 @@ This is a paragraph with some important information.
                   </h2>
                   <button
                     onClick={handleGeneratePDF}
-                    disabled={isGenerating || (!content.trim() && !formattedHTML)}
+                    disabled={isGenerating || (!content.trim() && !formattedHTML && !featureImage)}
                     className="flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isGenerating ? (
@@ -639,7 +740,7 @@ This is a paragraph with some important information.
                   {/* Download Button Overlaid at bottom for quick access */}
                   <button
                     onClick={handleGeneratePDF}
-                    disabled={isGenerating || (!content.trim() && !formattedHTML)}
+                    disabled={isGenerating || (!content.trim() && !formattedHTML && !featureImage)}
                     className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-slate-800 disabled:opacity-50"
                   >
                     {isGenerating ? "Exporting High-Res PDF..." : "Download PDF →"}
