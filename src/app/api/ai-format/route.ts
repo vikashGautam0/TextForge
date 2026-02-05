@@ -4,8 +4,14 @@ import { auth } from "@clerk/nextjs/server";
 import { supabase } from "@/lib/supabase";
 
 // Initialize Mistral AI client
+const mistralKey = process.env.MISTRAL_API_KEY || "placeholder_mistral_key";
+
+if (!process.env.MISTRAL_API_KEY) {
+    console.warn("⚠️ Mistral API key missing. Using placeholder for build stability.");
+}
+
 const mistral = new Mistral({
-    apiKey: process.env.MISTRAL_API_KEY || "",
+    apiKey: mistralKey,
 });
 
 type FormatPayload = {
