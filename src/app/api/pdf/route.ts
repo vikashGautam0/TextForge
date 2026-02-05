@@ -16,6 +16,7 @@ type PDFGeneratePayload = {
 export async function POST(request: Request) {
     try {
         const { userId } = await auth();
+        console.log("PDF Generation Request - User ID:", userId);
         if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         // Check user plan and usage
