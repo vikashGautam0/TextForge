@@ -7,6 +7,7 @@ interface EditorProps {
     onChange: (value: string) => void;
     placeholder?: string;
     className?: string;
+    onInsert?: (prefix: string, suffix: string) => void;
 }
 
 export default function Editor({

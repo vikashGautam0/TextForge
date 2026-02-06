@@ -21,6 +21,10 @@ type FormatPayload = {
     task?: "format" | "summarize" | "expand" | "refine";
 };
 
+type ContentChunk = {
+    text?: string;
+};
+
 
 export async function POST(req: Request) {
     try {
@@ -94,7 +98,7 @@ ${plan === "pro" || plan === "business" ? "- Add advanced structure (bullets, ta
         });
 
         // Extract content from response - handle both string and ContentChunk array
-        const messageContent = chatResponse.choices?.[0]?.message?.content;
+        const messageContent = chatResponse.choices?.[0]?.message?.content as string | ContentChunk[] | undefined;
         let formattedHTML = "";
 
         if (typeof messageContent === "string") {
@@ -102,7 +106,7 @@ ${plan === "pro" || plan === "business" ? "- Add advanced structure (bullets, ta
         } else if (Array.isArray(messageContent)) {
             // Handle ContentChunk array - extract text from chunks
             formattedHTML = messageContent
-                .map((chunk: any) => chunk.text || "")
+                .map((chunk) => chunk.text || "")
                 .join("");
         }
 
@@ -144,10 +148,10 @@ ${plan === "pro" || plan === "business" ? "- Add advanced structure (bullets, ta
                 model: "mistral-small-latest",
             },
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("AI formatting error:", error);
         return NextResponse.json(
-            { error: error.message || "Failed to format text" },
+            { error: error instanceof Error ? error.message : "Failed to format text" },
             { status: 500 }
         );
     }

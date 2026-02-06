@@ -1,7 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 const templateShowcase = [
@@ -86,6 +86,25 @@ const features = [
 ];
 
 export default function Home() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.setAttribute('data-scroll', 'in');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('section').forEach(section => {
+      section.setAttribute('data-scroll', 'out');
+      observer.observe(section);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const handleCheckout = async (plan: string) => {
     try {
       const response = await fetch("/api/razorpay/order", {
@@ -121,119 +140,145 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen">
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6 text-sm">
-        <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-white font-bold">
-            TF
-          </div>
-          <div>
-            <p className="text-lg font-bold text-slate-900 leading-tight">TextForge</p>
-            <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Studio</p>
+    <div className="min-h-screen bg-[#fafafa]">
+      <header className="sticky top-0 z-50 w-full border-b border-slate-200/50 bg-white/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-[10px] font-bold text-white uppercase tracking-tighter">
+              TF
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900 leading-none">TextForge</p>
+              <p className="text-[8px] uppercase tracking-[0.2em] text-slate-400 font-bold">Studio</p>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden items-center gap-8 text-[13px] font-semibold text-slate-500 md:flex">
+            <a href="#features" className="hover:text-slate-900 transition-colors">Features</a>
+            <a href="#templates" className="hover:text-slate-900 transition-colors">Templates</a>
+            <a href="#pricing" className="hover:text-slate-900 transition-colors">Pricing</a>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <div className="hidden items-center gap-3 md:flex">
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="text-[13px] font-bold text-slate-600 hover:text-slate-900 transition-colors mr-2">
+                    Sign In
+                  </button>
+                </SignInButton>
+                <Link
+                  className="rounded-full bg-slate-900 px-5 py-2 text-[11px] font-bold uppercase tracking-widest text-white transition hover:bg-slate-700 shadow-sm"
+                  href="/sign-up"
+                >
+                  Join Now
+                </Link>
+              </SignedOut>
+              <SignedIn>
+                <Link
+                  className="rounded-full border border-slate-200 bg-white px-5 py-2 text-[11px] font-bold uppercase tracking-widest text-slate-900 transition hover:bg-slate-50"
+                  href="/dashboard"
+                >
+                  Dashboard
+                </Link>
+                <UserButton afterSignOutUrl="/" />
+              </SignedIn>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 md:hidden"
+            >
+              <svg className="h-4 w-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {isMobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
           </div>
         </div>
-        <nav className="hidden items-center gap-8 text-slate-500 font-medium md:flex">
-          <a href="#features" className="hover:text-slate-900 transition-colors">Features</a>
-          <Link href="/templates" className="hover:text-slate-900 transition-colors">Templates</Link>
-          <a href="#pricing" className="hover:text-slate-900 transition-colors">Pricing</a>
-        </nav>
-        <div className="flex items-center gap-4">
-          <SignedOut>
-            <SignInButton mode="modal">
-              <button className="text-slate-600 hover:text-slate-900 font-semibold transition-colors">
-                Sign In
-              </button>
-            </SignInButton>
-            <Link
-              className="rounded-full bg-slate-900 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-slate-700 shadow-lg shadow-slate-200"
-              href="/sign-up"
-            >
-              Get Started
-            </Link>
-          </SignedOut>
-          <SignedIn>
-            <Link
-              className="rounded-full border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-slate-900 transition hover:bg-slate-50"
-              href="/dashboard"
-            >
-              Go to Dashboard
-            </Link>
-            <UserButton afterSignOutUrl="/" />
-          </SignedIn>
-        </div>
+
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <div className="fixed inset-0 top-[65px] z-40 bg-white p-6 animate-in slide-in-from-top-4 duration-200 md:hidden">
+            <nav className="flex flex-col gap-6 text-lg font-bold text-slate-900">
+              <a href="#features" onClick={() => setIsMobileMenuOpen(false)}>Features</a>
+              <a href="#templates" onClick={() => setIsMobileMenuOpen(false)}>Templates</a>
+              <a href="#pricing" onClick={() => setIsMobileMenuOpen(false)}>Pricing</a>
+              <hr className="border-slate-100" />
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="text-left">Sign In</button>
+                </SignInButton>
+                <Link href="/sign-up" className="rounded-2xl bg-slate-900 py-4 text-center text-white">
+                  Get Started Free
+                </Link>
+              </SignedOut>
+              <SignedIn>
+                <Link href="/dashboard" className="rounded-2xl bg-slate-900 py-4 text-center text-white">
+                  Go to Dashboard
+                </Link>
+                <div className="flex items-center gap-3 py-2">
+                  <UserButton afterSignOutUrl="/" showName />
+                </div>
+              </SignedIn>
+            </nav>
+          </div>
+        )}
       </header>
 
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-20 px-6 pb-24 pt-12">
-        <section className="grid gap-10 md:grid-cols-[1.2fr_0.8fr]">
-          <div className="flex flex-col gap-6">
-            <p className="inline-flex w-fit items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white">
-              Launching Beta
-              <span className="rounded-full bg-amber-300 px-2 py-0.5 text-[10px] text-slate-900">
-                Early Access
-              </span>
-            </p>
-            <h1 className="text-4xl font-semibold leading-tight text-slate-900 md:text-5xl">
-              Generate client-ready PDFs from a single prompt.
-            </h1>
-            <p className="text-lg leading-relaxed text-slate-600">
-              TextForge turns prompts, templates, and data into branded PDFs in
-              minutes. No layout work, no manual formatting, just export-ready
-              documents.
-            </p>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/dashboard"
-                className="rounded-full bg-slate-900 px-6 py-3 text-center text-sm font-semibold text-white transition hover:bg-slate-700"
-              >
-                Start generating
-              </Link>
-              <a
-                href="#pricing"
-                className="rounded-full border border-slate-200 px-6 py-3 text-center text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-900"
-              >
-                View pricing
-              </a>
-            </div>
-            <div className="flex flex-wrap items-center gap-6 text-xs text-slate-500">
-              <span>Trusted by 40+ early teams</span>
-              <span>Avg. export time: 18 seconds</span>
-              <span>99.9% uptime</span>
-            </div>
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-24 px-6 pb-24 pt-16">
+        <section className="flex flex-col items-center text-center gap-8 lg:py-12">
+          <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            Beta Now Public
           </div>
-
-          {/* Premium Hero Image with Glassmorphism */}
-          <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-2xl transition hover:scale-[1.01] duration-500 group">
-            <Image
-              src="https://plus.unsplash.com/premium_photo-1678566153919-86c4ba4216f1?w=800&auto=format&fit=crop&q=80"
-              alt="Modern Document Design"
-              width={800}
-              height={400}
-              className="w-full h-[400px] object-cover"
-              unoptimized
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-60" />
-            <div className="absolute bottom-6 left-6 right-6 rounded-2xl bg-white/40 p-4 backdrop-blur-xl border border-white/40 shadow-xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-900">Live Engine</p>
-                  <p className="text-xs font-semibold text-slate-800">Processing Document Structure...</p>
-                </div>
-                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              </div>
-            </div>
+          <h1 className="max-w-4xl text-5xl font-bold tracking-tight text-slate-900 md:text-7xl">
+            From Thought to PDF, <span className="text-slate-400 font-medium">Instantly.</span>
+          </h1>
+          <p className="max-w-2xl text-lg leading-relaxed text-slate-500">
+            TextForge Studio transforms your ideas into professionally branded documents.
+            No manual formatting. No design skills required. Just pure AI efficiency.
+          </p>
+          <div className="flex flex-col w-full gap-4 sm:flex-row sm:justify-center mt-4">
+            <Link
+              href="/dashboard"
+              className="rounded-full bg-slate-900 px-10 py-4 text-sm font-bold uppercase tracking-widest text-white transition hover:bg-slate-700 shadow-xl shadow-slate-200"
+            >
+              Start Generating
+            </Link>
+            <a
+              href="#pricing"
+              className="rounded-full border border-slate-200 bg-white px-10 py-4 text-sm font-bold uppercase tracking-widest text-slate-700 transition hover:bg-slate-50"
+            >
+              View Pricing
+            </a>
+          </div>
+          <div className="mt-8 flex items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <span>40+ Teams Joined</span>
+            <div className="h-1 w-1 rounded-full bg-slate-200" />
+            <span>99.9% Uptime</span>
           </div>
         </section>
 
-        <section id="features" className="grid gap-6 md:grid-cols-3">
+        <section id="features" className="grid gap-12 md:grid-cols-3">
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-sm"
+              className="flex flex-col gap-4"
             >
-              <h3 className="text-lg font-semibold text-slate-900">
+              <div className="h-1 w-12 bg-slate-900 rounded-full" />
+              <h3 className="text-xl font-bold text-slate-900">
                 {feature.title}
               </h3>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600">
+              <p className="text-sm leading-relaxed text-slate-500">
                 {feature.detail}
               </p>
             </div>
@@ -317,127 +362,118 @@ export default function Home() {
           ))}
         </section>
 
-        <section id="pricing" className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <section id="pricing" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {/* Starter Plan */}
-          <div className="flex flex-col rounded-3xl border border-slate-200 bg-white/70 p-6 transition hover:shadow-xl">
+          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white/70 p-4 transition hover:shadow-lg">
             <div className="flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Starter</p>
-              <p className="mt-4 flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-slate-900">₹0</span>
-                <span className="text-sm text-slate-500">/mo</span>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500">Starter</p>
+              <p className="mt-2 flex items-baseline gap-1">
+                <span className="text-2xl font-bold text-slate-900">₹0</span>
+                <span className="text-[10px] text-slate-500">/mo</span>
               </p>
-              <ul className="mt-6 space-y-3 text-xs text-slate-600">
-                <li className="flex gap-2">✅ <span>10 PDFs / month</span></li>
-                <li className="flex gap-2">✅ <span>Basic formatting</span></li>
-                <li className="flex gap-2">✅ <span>1 basic template</span></li>
-                <li className="flex gap-2 font-medium text-amber-600 italic">⚠️ Watermark enabled</li>
-                <li className="flex gap-2 text-slate-400">❌ No AI formatting</li>
+              <ul className="mt-4 space-y-2 text-[10px] text-slate-600">
+                <li className="flex gap-2">✅ <span>10 PDFs / mo</span></li>
+                <li className="flex gap-2">✅ <span>Basic layout</span></li>
+                <li className="flex gap-2 font-medium text-amber-600">⚠️ Watermark</li>
               </ul>
             </div>
             <Link
               href="/dashboard"
-              className="mt-8 inline-flex w-full justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-slate-700"
+              className="mt-6 inline-flex w-full justify-center rounded-lg bg-slate-900 px-3 py-2 text-[10px] font-bold text-white transition hover:bg-slate-700"
             >
               Get Started
             </Link>
           </div>
 
           {/* Creator Plan */}
-          <div className="flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-xl">
+          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-lg">
             <div className="flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-blue-600">Creator</p>
-              <p className="mt-4 flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-slate-900">₹149</span>
-                <span className="text-sm text-slate-500">/mo</span>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-blue-600">Creator</p>
+              <p className="mt-2 flex items-baseline gap-1">
+                <span className="text-2xl font-bold text-slate-900">₹149</span>
+                <span className="text-[10px] text-slate-500">/mo</span>
               </p>
-              <ul className="mt-6 space-y-3 text-xs text-slate-600">
+              <ul className="mt-4 space-y-2 text-[10px] text-slate-600">
                 <li className="flex gap-2">✅ <span>Unlimited PDFs</span></li>
-                <li className="flex gap-2">✅ <span>5 premium templates</span></li>
-                <li className="flex gap-2">✅ <span>AI basic formatting</span></li>
+                <li className="flex gap-2">✅ <span>5 templates</span></li>
                 <li className="flex gap-2">✅ <span>No watermark</span></li>
-                <li className="flex gap-2">✅ <span>History unlocked</span></li>
               </ul>
             </div>
             <button
               onClick={() => handleCheckout('creator')}
-              className="mt-8 inline-flex w-full justify-center rounded-xl border-2 border-slate-900 px-4 py-2 text-sm font-bold text-slate-900 transition hover:bg-slate-900 hover:text-white"
+              className="mt-6 inline-flex w-full justify-center rounded-lg border border-slate-900 px-3 py-1.5 text-[10px] font-bold text-slate-900 transition hover:bg-slate-900 hover:text-white"
             >
               Go Creator
             </button>
           </div>
 
           {/* Pro Plan */}
-          <div className="relative flex flex-col rounded-3xl border-2 border-slate-900 bg-slate-900 p-6 text-white shadow-2xl transition hover:scale-[1.02]">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-amber-300 px-3 py-1 text-[10px] font-bold uppercase tracking-tight text-slate-900">
-              Most Popular
+          <div className="relative flex flex-col rounded-2xl border-2 border-slate-900 bg-slate-900 p-4 text-white shadow-xl transition hover:scale-[1.02]">
+            <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-300 px-2 py-0.5 text-[8px] font-bold uppercase tracking-tight text-slate-900 whitespace-nowrap">
+              Best Value
             </div>
             <div className="flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-amber-300">Pro Editor</p>
-              <p className="mt-4 flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-white">₹399</span>
-                <span className="text-sm text-slate-400">/mo</span>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-amber-300">Pro Editor</p>
+              <p className="mt-2 flex items-baseline gap-1">
+                <span className="text-2xl font-bold text-white">₹399</span>
+                <span className="text-[10px] text-slate-400">/mo</span>
               </p>
-              <ul className="mt-6 space-y-3 text-xs text-slate-300">
-                <li className="flex gap-2">✅ <span>Everything in Creator</span></li>
-                <li className="flex gap-2">✅ <span>15+ Premium templates</span></li>
-                <li className="flex gap-2">✅ <span>Advanced AI formatting</span></li>
+              <ul className="mt-4 space-y-2 text-[10px] text-slate-300">
+                <li className="flex gap-2">✅ <span>Everything Creator</span></li>
+                <li className="flex gap-2">✅ <span>15+ templates</span></li>
                 <li className="flex gap-2">✅ <span>Custom branding</span></li>
-                <li className="flex gap-2">✅ <span>Priority Support</span></li>
               </ul>
             </div>
             <button
               onClick={() => handleCheckout('pro')}
-              className="mt-8 inline-flex w-full justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-slate-900 transition hover:bg-slate-100"
+              className="mt-6 inline-flex w-full justify-center rounded-lg bg-white px-3 py-2 text-[10px] font-bold text-slate-900 transition hover:bg-slate-100"
             >
               Upgrade to Pro
             </button>
           </div>
 
           {/* Business Plan */}
-          <div className="flex flex-col rounded-3xl border border-slate-200 bg-white/70 p-6 transition hover:shadow-xl">
+          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white/70 p-4 transition hover:shadow-lg">
             <div className="flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Business</p>
-              <p className="mt-4 flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-slate-900">₹1199</span>
-                <span className="text-sm text-slate-500">/mo</span>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500">Business</p>
+              <p className="mt-2 flex items-baseline gap-1">
+                <span className="text-2xl font-bold text-slate-900">₹1199</span>
+                <span className="text-[10px] text-slate-500">/mo</span>
               </p>
-              <ul className="mt-6 space-y-3 text-xs text-slate-600">
-                <li className="flex gap-2">✅ <span>Everything in Pro</span></li>
-                <li className="flex gap-2">✅ <span>Team accounts (5)</span></li>
-                <li className="flex gap-2">✅ <span>Unlimited API access</span></li>
-                <li className="flex gap-2">✅ <span>Workflow automation</span></li>
-                <li className="flex gap-2">✅ <span>SLA Support</span></li>
+              <ul className="mt-4 space-y-2 text-[10px] text-slate-600">
+                <li className="flex gap-2">✅ <span>API access</span></li>
+                <li className="flex gap-2">✅ <span>5 Team seats</span></li>
+                <li className="flex gap-2">✅ <span>Priority SLA</span></li>
               </ul>
             </div>
             <button
               onClick={() => handleCheckout('business')}
-              className="mt-8 inline-flex w-full justify-center rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-300 transition"
+              className="mt-6 inline-flex w-full justify-center rounded-lg border border-slate-200 px-3 py-1.5 text-[10px] font-semibold text-slate-700 hover:border-slate-300 transition"
             >
               Contact Team
             </button>
           </div>
 
           {/* Lifetime Plan */}
-          <div className="flex flex-col rounded-3xl border border-slate-200 bg-gradient-to-br from-indigo-50 to-white p-6 transition hover:shadow-xl">
+          <div className="flex flex-col rounded-2xl border border-slate-200 bg-gradient-to-br from-indigo-50 to-white p-4 transition hover:shadow-lg">
             <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-600">Lifetime</p>
-                <span className="rounded bg-indigo-100 px-1.5 py-0.5 text-[8px] font-bold text-indigo-700">LIMITED</span>
+              <div className="flex items-center gap-1.5">
+                <p className="text-[9px] font-bold uppercase tracking-widest text-indigo-600">Lifetime</p>
+                <span className="rounded bg-indigo-100 px-1 py-0.5 text-[7px] font-bold text-indigo-700 uppercase">Legacy</span>
               </div>
-              <p className="mt-4 flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-slate-900">₹1,999</span>
-                <span className="text-[10px] font-bold text-slate-400 uppercase">One-time</span>
+              <p className="mt-2 flex items-baseline gap-1">
+                <span className="text-2xl font-bold text-slate-900">₹1,999</span>
+                <span className="text-[8px] font-bold text-slate-400 uppercase">Once</span>
               </p>
-              <ul className="mt-6 space-y-3 text-xs text-slate-600">
-                <li className="flex gap-2">✅ <span>Creator Plan Forever</span></li>
-                <li className="flex gap-2">✅ <span>No monthly renewal</span></li>
-                <li className="flex gap-2">✅ <span>Future Basic templates</span></li>
-                <li className="flex gap-2">✅ <span>Legacy Support</span></li>
+              <ul className="mt-4 space-y-2 text-[10px] text-slate-600">
+                <li className="flex gap-2">✅ <span>Forever Access</span></li>
+                <li className="flex gap-2">✅ <span>All basic updates</span></li>
+                <li className="flex gap-2">✅ <span>No monthly fee</span></li>
               </ul>
             </div>
             <button
               onClick={() => handleCheckout('lifetime')}
-              className="mt-8 inline-flex w-full justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-indigo-700 shadow-lg shadow-indigo-100"
+              className="mt-6 inline-flex w-full justify-center rounded-lg bg-indigo-600 px-3 py-2 text-[10px] font-bold text-white transition hover:bg-indigo-700 shadow-md shadow-indigo-100"
             >
               Buy Lifetime
             </button>
@@ -466,7 +502,7 @@ export default function Home() {
               <p className="text-sm font-bold text-slate-900 uppercase tracking-widest leading-none mt-1">TextForge</p>
             </div>
             <div className="flex gap-8 text-xs font-semibold text-slate-500">
-              <Link href="/templates" className="hover:text-slate-900 transition font-bold">Templates</Link>
+              <a href="#templates" className="hover:text-slate-900 transition font-bold">Templates</a>
               <Link href="/api-docs" className="hover:text-slate-900 transition font-bold">API Docs</Link>
               <Link href="/terms" className="hover:text-slate-900 transition">Terms</Link>
               <Link href="/privacy" className="hover:text-slate-900 transition">Privacy</Link>

@@ -41,22 +41,25 @@ const TEMPLATES = [
 
 export default function TemplatesPage() {
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-[#fafafa]">
             {/* Small Header */}
-            <nav className="border-b bg-white px-6 py-4">
-                <div className="mx-auto flex max-w-7xl items-center justify-between">
-                    <Link href="/" className="text-xl font-bold text-slate-900">TextForge</Link>
+            <nav className="border-b border-slate-200/50 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+                <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+                    <Link href="/" className="flex items-center gap-2">
+                        <div className="flex h-7 w-7 items-center justify-center rounded bg-slate-900 text-[10px] font-bold text-white uppercase tracking-tighter">TF</div>
+                        <span className="text-sm font-bold text-slate-900">TextForge</span>
+                    </Link>
                     <div className="flex items-center gap-4">
-                        <Link href="/dashboard" className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition">Dashboard</Link>
+                        <Link href="/dashboard" className="text-xs font-bold text-slate-400 hover:text-slate-900 transition uppercase tracking-widest">Dashboard</Link>
                         <UserButton afterSignOutUrl="/" />
                     </div>
                 </div>
             </nav>
 
-            <main className="mx-auto max-w-7xl px-6 py-12">
-                <div className="mb-12">
-                    <h1 className="text-3xl font-bold text-slate-900">Document Templates</h1>
-                    <p className="mt-2 text-slate-500">Choose the perfect aesthetic for your next PDF.</p>
+            <main className="mx-auto max-w-7xl px-6 py-16">
+                <div className="mb-16 text-center">
+                    <h1 className="text-4xl font-bold tracking-tight text-slate-900">Document Gallery</h1>
+                    <p className="mt-4 text-slate-500 max-w-xl mx-auto">Select a foundation for your professionally crafted AI documents.</p>
                 </div>
 
                 <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">

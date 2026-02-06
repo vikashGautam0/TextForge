@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import { auth } from "@clerk/nextjs/server";
 import { supabase } from "@/lib/supabase";
 
@@ -20,13 +20,13 @@ export async function POST(request: Request) {
         if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         // Check user plan and usage
-        let { data: sub } = await supabase
+        const { data: sub } = await supabase
             .from("subscriptions")
             .select("plan_type, pdf_usage_count, last_reset_date")
             .eq("user_id", userId)
             .single();
 
-        let plan = sub?.plan_type || "starter";
+        const plan = sub?.plan_type || "starter";
         let usageCount = sub?.pdf_usage_count || 0;
         let lastReset = sub?.last_reset_date ? new Date(sub.last_reset_date) : new Date();
 
@@ -49,14 +49,16 @@ export async function POST(request: Request) {
         }
 
         const body = (await request.json()) as PDFGeneratePayload;
-        let {
+        const {
             content,
             title = "Document",
-            template = "simple",
+            template: requestedTemplate = "simple",
             fontFamily = "helvetica",
             accentColor = "#000000",
             featureImage,
         } = body;
+
+        let template = requestedTemplate;
 
         // Enforce template restrictions
         // starter: simple or academic
@@ -112,7 +114,6 @@ export async function POST(request: Request) {
 
         const font = await pdfDoc.embedFont(selectedFont);
         const fontBold = await pdfDoc.embedFont(selectedFontBold);
-        const fontItalic = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
         const fontMono = await pdfDoc.embedFont(StandardFonts.Courier);
 
         // Constants for layout
@@ -122,7 +123,19 @@ export async function POST(request: Request) {
         const CONTENT_WIDTH = PAGE_WIDTH - (MARGIN * 2);
 
         // Template definitions
-        const themes = {
+        type RGB = ReturnType<typeof rgb>;
+        type Theme = {
+            primary: RGB;
+            secondary: RGB;
+            accent: RGB;
+            bg: RGB;
+            headerBg?: RGB;
+            headerText?: RGB;
+            font: PDFFont;
+            titleFont: PDFFont;
+        };
+
+        const themes: Record<string, Theme> = {
             simple: {
                 primary: rgb(0.1, 0.1, 0.1),
                 secondary: rgb(0.4, 0.4, 0.4),
@@ -163,7 +176,7 @@ export async function POST(request: Request) {
             }
         };
 
-        const theme = { ...(themes[template] || themes.simple) };
+        const theme: Theme = themes[template] || themes.simple;
         if (plan !== "starter" && plan !== "free" && accentColor) {
             const customRgb = hexToRgb(accentColor);
             theme.accent = rgb(customRgb.r, customRgb.g, customRgb.b);
@@ -173,8 +186,7 @@ export async function POST(request: Request) {
         let y = PAGE_HEIGHT - MARGIN;
 
         // Helper to draw background/structure for each page
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const drawPageDecoration = (page: any, isFirstPage: boolean = false) => {
+        const drawPageDecoration = (page: PDFPage, isFirstPage: boolean = false) => {
             if (template === "code") {
                 // Background - Ray.so "Midnight" Deep Indigo
                 page.drawRectangle({
@@ -234,15 +246,13 @@ export async function POST(request: Request) {
                 return dotY - 45;
             } else if (isFirstPage) {
                 // Draw Header for other templates (only on first page)
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const headTheme = theme as any;
-                if (headTheme.headerBg) {
+                if (theme.headerBg) {
                     page.drawRectangle({
                         x: 0,
                         y: PAGE_HEIGHT - 100,
                         width: PAGE_WIDTH,
                         height: 100,
-                        color: headTheme.headerBg,
+                        color: theme.headerBg,
                     });
                 }
 
@@ -252,7 +262,7 @@ export async function POST(request: Request) {
                         y: PAGE_HEIGHT - 60,
                         size: 24,
                         font: fontBold,
-                        color: headTheme.headerText || theme.primary,
+                        color: theme.headerText || theme.primary,
                     });
                 }
 
@@ -261,7 +271,7 @@ export async function POST(request: Request) {
                     y: PAGE_HEIGHT - 85,
                     size: 10,
                     font: font,
-                    color: headTheme.headerText ? rgb(0.8, 0.8, 1) : theme.secondary,
+                    color: theme.headerText ? rgb(0.8, 0.8, 1) : theme.secondary,
                 });
 
                 return PAGE_HEIGHT - 130;
@@ -328,10 +338,8 @@ export async function POST(request: Request) {
         // Helper for text wrapping & pagination with basic syntax highlighting
         const drawWrappedText = (text: string, options: {
             size: number,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            font: any,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            color: any,
+            font: PDFFont,
+            color: RGB,
             lineHeight?: number,
             indent?: number
         }) => {
