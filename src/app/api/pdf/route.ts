@@ -16,29 +16,34 @@ type PDFGeneratePayload = {
 export async function POST(request: Request) {
     try {
         const { userId } = await auth();
-        console.log("PDF Generation Request - User ID:", userId);
-        if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        console.log("PDF Generation Request - User ID:", userId || "Anonymous");
 
-        // Check user plan and usage
-        const { data: sub } = await supabase
-            .from("subscriptions")
-            .select("plan_type, pdf_usage_count, last_reset_date")
-            .eq("user_id", userId)
-            .single();
+        let plan = "starter";
+        let usageCount = 0;
+        let lastReset = new Date();
 
-        const plan = sub?.plan_type || "starter";
-        let usageCount = sub?.pdf_usage_count || 0;
-        let lastReset = sub?.last_reset_date ? new Date(sub.last_reset_date) : new Date();
-
-        // Monthly Reset Logic
-        const now = new Date();
-        if (now.getMonth() !== lastReset.getMonth() || now.getFullYear() !== lastReset.getFullYear()) {
-            usageCount = 0;
-            lastReset = now; // Update the variable for the final upsert
-            await supabase
+        if (userId) {
+            // Check user plan and usage
+            const { data: sub } = await supabase
                 .from("subscriptions")
-                .update({ pdf_usage_count: 0, last_reset_date: now.toISOString() })
-                .eq("user_id", userId);
+                .select("plan_type, pdf_usage_count, last_reset_date")
+                .eq("user_id", userId)
+                .single();
+
+            plan = sub?.plan_type || "starter";
+            usageCount = sub?.pdf_usage_count || 0;
+            lastReset = sub?.last_reset_date ? new Date(sub.last_reset_date) : new Date();
+
+            // Monthly Reset Logic
+            const now = new Date();
+            if (now.getMonth() !== lastReset.getMonth() || now.getFullYear() !== lastReset.getFullYear()) {
+                usageCount = 0;
+                lastReset = now;
+                await supabase
+                    .from("subscriptions")
+                    .update({ pdf_usage_count: 0, last_reset_date: now.toISOString() })
+                    .eq("user_id", userId);
+            }
         }
 
         // Limit Checks
@@ -557,15 +562,17 @@ export async function POST(request: Request) {
             });
         });
 
-        // Increment usage count (using upsert to handle new users)
-        await supabase
-            .from("subscriptions")
-            .upsert({
-                user_id: userId,
-                pdf_usage_count: usageCount + 1,
-                plan_type: plan,
-                last_reset_date: lastReset.toISOString()
-            }, { onConflict: 'user_id' });
+        // Increment usage count if logged in
+        if (userId) {
+            await supabase
+                .from("subscriptions")
+                .upsert({
+                    user_id: userId,
+                    pdf_usage_count: usageCount + 1,
+                    plan_type: plan,
+                    last_reset_date: lastReset.toISOString()
+                }, { onConflict: 'user_id' });
+        }
 
         // Generate and Return PDF
         const pdfBytes = await pdfDoc.save();

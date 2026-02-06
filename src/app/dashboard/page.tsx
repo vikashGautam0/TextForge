@@ -5,7 +5,7 @@ import Link from "next/link";
 import Editor from "@/components/Editor";
 import { type TemplateType } from "@/components/TemplatePicker";
 import { supabase } from "@/lib/supabase";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { UserButton, useUser, SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 
@@ -122,12 +122,11 @@ function DashboardPageContent() {
           setError("");
         } else {
           const errorData = await response.json();
-          console.error("Preview API error:", errorData.error);
-          setError(`Preview Error: ${errorData.error}`);
+          // Don't show technical preview errors directly, just log them
+          console.warn("Live Preview Error:", errorData.error);
         }
       } catch (err) {
         console.error("Preview generation fatal error", err);
-        setError("Failed to connect to PDF engine");
       } finally {
         setIsPreviewLoading(false);
       }
@@ -137,10 +136,36 @@ function DashboardPageContent() {
     return () => clearTimeout(timer);
   }, [content, formattedHTML, template, title, fontFamily, accentColor, featureImage, refreshTrigger]);
 
+  // Error Mapping Utility
+  const handleUserError = useCallback((err: unknown, fallback: string) => {
+    const rawMessage = err instanceof Error ? err.message : String(err);
+    console.error("Technical Error:", rawMessage);
+
+    let friendlyMessage = fallback;
+
+    if (rawMessage.includes("limit reached")) {
+      friendlyMessage = "Monthly export limit reached. Upgrade to continue!";
+    } else if (rawMessage.includes("Unauthorized")) {
+      friendlyMessage = "Session expired. Please sign in again.";
+    } else if (rawMessage.includes("Content is required")) {
+      friendlyMessage = "Don't forget to add some content first!";
+    } else if (rawMessage.includes("Failed to fetch") || rawMessage.includes("NetworkError")) {
+      friendlyMessage = "Connection unstable. Live Engine is trying to reconnect...";
+    } else if (rawMessage.includes("Unexpected token") || rawMessage.includes("parsing")) {
+      friendlyMessage = "Engine hiccup. Trying to recover...";
+    }
+
+    setError(friendlyMessage);
+    // Clear error automatically after 6s
+    const timer = setTimeout(() => setError(""), 6000);
+    return () => clearTimeout(timer);
+  }, []);
+
   // AI Format Handler
   const handleAIFormat = async (task: "format" | "summarize" | "expand" | "refine" = "format") => {
     if (!content.trim()) {
-      setError("Please enter some content first");
+      setError("Add some text first so the AI can work its magic!");
+      setTimeout(() => setError(""), 3000);
       return;
     }
 
@@ -167,7 +192,7 @@ function DashboardPageContent() {
       const data = await response.json();
       setFormattedHTML(data.formattedHTML);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to format content");
+      handleUserError(err, "AI Magic is resting. Try again in a moment.");
     } finally {
       setIsFormatting(false);
     }
@@ -288,7 +313,7 @@ function DashboardPageContent() {
         }]).then(() => fetchExportCount());
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to generate PDF");
+      handleUserError(err, "Export failed. Please check your content and try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -390,23 +415,46 @@ function DashboardPageContent() {
             </div>
           </div>
 
-          {/* Stats */}
+          {/* Stats / Guest Mode */}
           <div className="mt-auto space-y-4 rounded-3xl bg-slate-50 p-5 shadow-inner">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Exports Left</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              {user ? "Exports Left" : "Guest Engine"}
+            </p>
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-slate-900">
-                {(() => {
+                {user ? (() => {
                   const plan = subscription?.plan_type || "starter";
                   if (plan === "starter" || plan === "free") return Math.max(0, 10 - exportCount);
                   return "∞";
-                })()}
+                })() : "Full Access"}
               </span>
-              <span className="text-slate-400 uppercase text-[9px] font-bold tracking-tighter">Plan: {subscription?.plan_type || 'Starter'}</span>
+              <span className="text-slate-400 uppercase text-[9px] font-bold tracking-tighter">
+                {user ? `Plan: ${subscription?.plan_type || 'Starter'}` : "Not Signed In"}
+              </span>
             </div>
             <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
-              <div className="h-full bg-slate-900 transition-all duration-500" style={{ width: `${Math.min(100, (exportCount / 10) * 100)}%` }} />
+              <div className={`h-full transition-all duration-500 ${user ? 'bg-slate-900' : 'bg-indigo-500 animate-pulse'}`}
+                style={{ width: user ? `${Math.min(100, (exportCount / 10) * 100)}%` : '100%' }}
+              />
             </div>
+            {!user && (
+              <p className="text-[9px] text-slate-400 italic mt-2">Sign in to save history & use custom fonts.</p>
+            )}
           </div>
+
+          {/* Conditional Ad for Free/Starter Users */}
+          {(subscription?.plan_type === "free" || subscription?.plan_type === "starter" || !subscription) && (
+            <div className="mt-4 overflow-hidden rounded-2xl border border-indigo-100 bg-indigo-600 p-4 transition-all hover:scale-[1.02]">
+              <div className="flex items-center justify-between">
+                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[8px] font-bold text-white uppercase italic">Sponsor</span>
+                <span className="text-[8px] text-indigo-100 font-medium">TextForge Pro</span>
+              </div>
+              <p className="mt-2 text-[11px] font-bold text-white leading-tight">Unlock AI History & HD Exports</p>
+              <Link href="/#pricing" className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-white py-2 text-[10px] font-black text-indigo-600 shadow-xl transition active:scale-95">
+                Go Premium 🚀
+              </Link>
+            </div>
+          )}
         </div>
       </aside>
 
@@ -469,8 +517,17 @@ function DashboardPageContent() {
               <span className="hidden sm:inline">Export PDF</span>
               <span className="sm:hidden">Export</span>
             </button>
-            <div className="scale-90 sm:scale-100">
-              <UserButton afterSignOutUrl="/" />
+            <div className="scale-90 sm:scale-100 flex items-center">
+              <SignedIn>
+                <UserButton afterSignOutUrl="/" />
+              </SignedIn>
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="rounded-lg bg-slate-900 px-3 py-1.5 text-[10px] font-bold text-white transition hover:bg-slate-800">
+                    Sign In
+                  </button>
+                </SignInButton>
+              </SignedOut>
             </div>
           </div>
         </header>
@@ -543,17 +600,26 @@ function DashboardPageContent() {
               </div>
             </div>
 
-            {/* Error Area */}
-            {error && (
-              <div className="mx-4 sm:mx-6 mt-4 rounded-xl border border-red-100 bg-red-50 p-3 text-[10px] font-bold text-red-600">
-                ❌ {error}
-              </div>
-            )}
-
-            {/* Success Area */}
-            {success && (
-              <div className="mx-4 sm:mx-6 mt-4 rounded-xl border border-emerald-100 bg-emerald-50 p-3 text-[10px] font-bold text-emerald-600">
-                ✅ {success}
+            {/* Premium Notification Area */}
+            {(error || success) && (
+              <div className="fixed bottom-8 left-1/2 z-[100] w-[90%] max-w-sm -translate-x-1/2 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                <div className={`flex items-center justify-between rounded-2xl border p-4 shadow-2xl backdrop-blur-xl ${error
+                  ? "border-red-100 bg-red-50/90 text-red-600"
+                  : "border-emerald-100 bg-emerald-50/90 text-emerald-600"
+                  }`}>
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg">{error ? "⚠️" : "✨"}</span>
+                    <p className="text-xs font-bold leading-tight">{error || success}</p>
+                  </div>
+                  <button
+                    onClick={() => { setError(""); setSuccess(""); }}
+                    className="ml-4 rounded-full p-1 transition hover:bg-black/5"
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             )}
 
@@ -601,6 +667,22 @@ function DashboardPageContent() {
                         <span className="sm:hidden">Refresh</span>
                       </button>
                     </div>
+
+                    {/* Conditional Preview Ad */}
+                    {(subscription?.plan_type === "free" || subscription?.plan_type === "starter" || !subscription) && (
+                      <div className="mx-6 mt-4 flex items-center justify-between rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2 shadow-lg animate-in fade-in slide-in-from-top-2">
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm">⭐</span>
+                          <div className="flex flex-col">
+                            <p className="text-[10px] font-bold text-white leading-none">Pro Tip: Remove Watermarks</p>
+                            <p className="text-[8px] text-indigo-100 mt-1">Upgrade to the Business plan for clean documents.</p>
+                          </div>
+                        </div>
+                        <Link href="/#pricing" className="rounded-lg bg-white/20 px-3 py-1 text-[9px] font-bold text-white backdrop-blur-sm transition hover:bg-white/30">
+                          Upgrade
+                        </Link>
+                      </div>
+                    )}
 
                     <div className="flex-1 p-2 sm:p-4 lg:p-10">
                       <div className="relative mx-auto h-full w-full max-w-3xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
