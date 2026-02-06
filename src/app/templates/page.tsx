@@ -45,8 +45,15 @@ export default function TemplatesPage() {
             {/* Small Header */}
             <nav className="border-b border-slate-200/50 bg-white/80 backdrop-blur-md sticky top-0 z-50">
                 <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-                    <Link href="/" className="flex items-center gap-2">
-                        <div className="flex h-7 w-7 items-center justify-center rounded bg-slate-900 text-[10px] font-bold text-white uppercase tracking-tighter">TF</div>
+                    <Link href="/" className="flex items-center gap-2 group">
+                        <div className="relative h-7 w-7 overflow-hidden rounded bg-white border border-slate-100 shadow-sm transition-transform group-hover:scale-110">
+                            <Image
+                                src="/logo.png"
+                                alt="TextForge Logo"
+                                fill
+                                className="object-contain p-1"
+                            />
+                        </div>
                         <span className="text-sm font-bold text-slate-900">TextForge</span>
                     </Link>
                     <div className="flex items-center gap-4">

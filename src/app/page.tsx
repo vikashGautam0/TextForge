@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import Image from "next/image";
+
 
 const templateShowcase = [
   {
@@ -143,9 +145,14 @@ export default function Home() {
     <div className="min-h-screen bg-[#fafafa]">
       <header className="sticky top-0 z-50 w-full border-b border-slate-200/50 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-[10px] font-bold text-white uppercase tracking-tighter">
-              TF
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white border border-slate-100 transition-transform group-hover:scale-110 shadow-sm">
+              <Image
+                src="/logo.png"
+                alt="TextForge Logo"
+                fill
+                className="object-contain p-1.5"
+              />
             </div>
             <div>
               <p className="text-sm font-bold text-slate-900 leading-none">TextForge</p>
@@ -498,7 +505,14 @@ export default function Home() {
         <footer className="mt-20 border-t border-slate-100 py-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-2">
-              <div className="h-6 w-6 rounded bg-slate-900 text-[10px] font-bold text-white flex items-center justify-center">TF</div>
+              <div className="relative h-6 w-6 overflow-hidden rounded bg-white border border-slate-100 shadow-sm">
+                <Image
+                  src="/logo.png"
+                  alt="TextForge Logo"
+                  fill
+                  className="object-contain p-1"
+                />
+              </div>
               <p className="text-sm font-bold text-slate-900 uppercase tracking-widest leading-none mt-1">TextForge</p>
             </div>
             <div className="flex gap-8 text-xs font-semibold text-slate-500">

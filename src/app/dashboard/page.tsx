@@ -7,6 +7,7 @@ import { type TemplateType } from "@/components/TemplatePicker";
 import { supabase } from "@/lib/supabase";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 
 export default function DashboardPage() {
   return (
@@ -301,8 +302,13 @@ function DashboardPageContent() {
         ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
       `}>
         <div className="mb-8 flex items-center gap-3">
-          <Link href="/" className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-sm font-bold text-white transition hover:bg-slate-700">
-            TF
+          <Link href="/" className="group relative h-10 w-10 overflow-hidden rounded-xl bg-white border border-slate-100 shadow-sm transition-transform hover:scale-105">
+            <Image
+              src="/logo.png"
+              alt="TextForge Logo"
+              fill
+              className="object-contain p-1.5"
+            />
           </Link>
           <div>
             <h1 className="text-xl font-bold text-slate-900 leading-none">Studio</h1>
@@ -425,30 +431,30 @@ function DashboardPageContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="bg-transparent text-sm font-bold text-slate-900 outline-none focus:ring-1 focus:ring-slate-100 rounded px-1"
+                  className="bg-transparent text-sm font-bold text-slate-900 outline-none focus:ring-1 focus:ring-slate-100 rounded px-1 w-full truncate"
                 />
               </div>
               <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                Auto-saved moments ago
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
+                <span className="truncate">Auto-saved moments ago</span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
                 setSuccess("Project link copied to clipboard!");
                 setTimeout(() => setSuccess(""), 3000);
               }}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition hover:bg-slate-100"
+              className="hidden sm:flex h-9 w-9 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition hover:bg-slate-100"
               title="Share Project"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -458,26 +464,28 @@ function DashboardPageContent() {
             <button
               onClick={handleGeneratePDF}
               disabled={isGenerating}
-              className="rounded-xl bg-indigo-600 px-6 py-2 text-xs font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-indigo-700 disabled:opacity-50"
+              className="rounded-xl bg-indigo-600 px-4 sm:px-6 py-2 text-[10px] sm:text-xs font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-indigo-700 disabled:opacity-50"
             >
-              Export PDF
+              <span className="hidden sm:inline">Export PDF</span>
+              <span className="sm:hidden">Export</span>
             </button>
-            <UserButton afterSignOutUrl="/" />
+            <div className="scale-90 sm:scale-100">
+              <UserButton afterSignOutUrl="/" />
+            </div>
           </div>
         </header>
 
-        {/* Inner Content Area */}
-        <div className="flex flex-1 flex-col overflow-hidden p-4 lg:p-6">
-          <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50">
+        <div className="flex flex-1 flex-col overflow-hidden p-2 sm:p-4 lg:p-6">
+          <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col overflow-hidden rounded-2xl sm:rounded-[2rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50">
             {/* Toolbar */}
-            <div className="flex h-14 items-center justify-between border-b border-slate-100 bg-white px-6">
-              <div className="flex items-center gap-1">
-                <div className="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-1.5">
+            <div className="flex h-14 items-center justify-between border-b border-slate-100 bg-white px-4 sm:px-6 overflow-x-auto no-scrollbar">
+              <div className="flex items-center gap-1 shrink-0">
+                <div className="flex items-center gap-2 rounded-lg bg-slate-50 px-2 sm:px-3 py-1.5">
                   <span className="text-xs">📄</span>
                   <select
                     value={template}
                     onChange={(e) => setTemplate(e.target.value as TemplateType)}
-                    className="bg-transparent text-[11px] font-bold text-slate-900 outline-none"
+                    className="bg-transparent text-[10px] sm:text-[11px] font-bold text-slate-900 outline-none"
                   >
                     <option value="simple">Minimalist Pro</option>
                     <option value="academic">Academic Thesis</option>
@@ -486,13 +494,13 @@ function DashboardPageContent() {
                   </select>
                 </div>
 
-                <div className="mx-4 h-4 w-[1px] bg-slate-200" />
+                <div className="mx-2 sm:mx-4 h-4 w-[1px] bg-slate-200" />
 
-                <div className="flex items-center gap-4 text-slate-400">
+                <div className="flex items-center gap-3 sm:gap-4 text-slate-400">
                   <button onClick={() => insertMarkdown('**', '**')} className="hover:text-slate-900 transition"><span className="font-bold">B</span></button>
                   <button onClick={() => insertMarkdown('_', '_')} className="hover:text-slate-900 transition"><span className="italic">I</span></button>
                   <button onClick={() => insertMarkdown('<u>', '</u>')} className="hover:text-slate-900 transition underline">U</button>
-                  <button onClick={() => insertMarkdown('[', '](url)')} className="hover:text-slate-900 transition">
+                  <button onClick={() => insertMarkdown('[', '](url)')} className="hidden sm:block hover:text-slate-900 transition">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.172 13.828a4 4 0 015.656 0l4-4a4 4 0 115.656 5.656l-1.101 1.101" /></svg>
                   </button>
                   <button onClick={() => insertMarkdown('\n- ', '')} className="hover:text-slate-900 transition">
@@ -504,7 +512,7 @@ function DashboardPageContent() {
               <button
                 onClick={() => handleAIFormat('format')}
                 disabled={isFormatting}
-                className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-1.5 text-[10px] font-bold text-white transition hover:scale-105 active:scale-95"
+                className="ml-4 flex items-center gap-2 rounded-full bg-slate-900 px-3 sm:px-4 py-1.5 text-[9px] sm:text-[10px] font-bold text-white transition hover:scale-105 active:scale-95 shrink-0"
               >
                 <span className="animate-pulse">✨</span>
                 AI Magic
@@ -512,23 +520,23 @@ function DashboardPageContent() {
             </div>
 
             {/* View Switcher Bar */}
-            <div className="flex h-12 items-center justify-center border-b border-slate-100 bg-slate-50/30 px-6">
+            <div className="flex h-12 items-center justify-center border-b border-slate-100 bg-slate-50/30 px-4 sm:px-6">
               <div className="flex items-center rounded-lg bg-slate-100/50 p-1">
                 <button
                   onClick={() => setView('editor')}
-                  className={`rounded-md px-6 py-1 text-[11px] font-bold transition ${view === 'editor' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                  className={`rounded-md px-4 sm:px-6 py-1 text-[11px] font-bold transition ${view === 'editor' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   Editor
                 </button>
                 <button
                   onClick={() => setView('split')}
-                  className={`rounded-md px-6 py-1 text-[11px] font-bold transition ${view === 'split' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                  className={`hidden lg:block rounded-md px-6 py-1 text-[11px] font-bold transition ${view === 'split' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   Split
                 </button>
                 <button
                   onClick={() => setView('preview')}
-                  className={`rounded-md px-6 py-1 text-[11px] font-bold transition ${view === 'preview' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                  className={`rounded-md px-4 sm:px-6 py-1 text-[11px] font-bold transition ${view === 'preview' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   Preview
                 </button>
@@ -537,14 +545,14 @@ function DashboardPageContent() {
 
             {/* Error Area */}
             {error && (
-              <div className="mx-6 mt-4 rounded-xl border border-red-100 bg-red-50 p-3 text-[10px] font-bold text-red-600">
+              <div className="mx-4 sm:mx-6 mt-4 rounded-xl border border-red-100 bg-red-50 p-3 text-[10px] font-bold text-red-600">
                 ❌ {error}
               </div>
             )}
 
             {/* Success Area */}
             {success && (
-              <div className="mx-6 mt-4 rounded-xl border border-emerald-100 bg-emerald-50 p-3 text-[10px] font-bold text-emerald-600">
+              <div className="mx-4 sm:mx-6 mt-4 rounded-xl border border-emerald-100 bg-emerald-50 p-3 text-[10px] font-bold text-emerald-600">
                 ✅ {success}
               </div>
             )}
@@ -555,7 +563,7 @@ function DashboardPageContent() {
                 {/* Editor View */}
                 {(view === 'editor' || view === 'split') && (
                   <div className={`flex flex-col overflow-hidden border-r border-slate-100 ${view === 'split' ? '' : 'mx-auto w-full max-w-4xl'}`}>
-                    <div className="flex-1 overflow-y-auto px-6 py-8 lg:px-12">
+                    <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-12">
                       <Editor
                         value={content}
                         onChange={(val) => {
@@ -573,7 +581,7 @@ function DashboardPageContent() {
                 {(view === 'preview' || view === 'split') && (
                   <div className="flex flex-col overflow-hidden bg-slate-50/50">
                     {/* Preview Header with Refresh */}
-                    <div className="flex items-center justify-between border-b border-slate-100 bg-white/50 px-6 py-3 backdrop-blur-sm">
+                    <div className="flex items-center justify-between border-b border-slate-100 bg-white/50 px-4 sm:px-6 py-3 backdrop-blur-sm">
                       <div className="flex items-center gap-2">
                         <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Live Engine</h3>
                         {isPreviewLoading && <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />}
@@ -584,16 +592,17 @@ function DashboardPageContent() {
                           fetchSubscription();
                           fetchExportCount();
                         }}
-                        className="group flex items-center gap-2 rounded-lg px-3 py-1 text-[10px] font-bold text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+                        className="group flex items-center gap-2 rounded-lg px-2 sm:px-3 py-1 text-[10px] font-bold text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
                       >
-                        <svg className={`h-3 w-3 ${isPreviewLoading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className={`h-3 w-3 shrink-0 ${isPreviewLoading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                        Refresh Preview
+                        <span className="hidden sm:inline">Refresh Preview</span>
+                        <span className="sm:hidden">Refresh</span>
                       </button>
                     </div>
 
-                    <div className="flex-1 p-6 lg:p-10">
+                    <div className="flex-1 p-2 sm:p-4 lg:p-10">
                       <div className="relative mx-auto h-full w-full max-w-3xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
                         {!pdfUrl ? (
                           <div className="flex h-full flex-col items-center justify-center gap-4 bg-slate-50 p-12 text-center text-slate-400">

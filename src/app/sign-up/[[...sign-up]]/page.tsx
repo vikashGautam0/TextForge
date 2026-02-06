@@ -1,4 +1,6 @@
 import { SignUp } from "@clerk/nextjs";
+import Image from "next/image";
+
 
 export default function SignUpPage() {
   return (
@@ -9,6 +11,14 @@ export default function SignUpPage() {
 
         <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-2xl">
           <div className="mb-8 text-center text-white">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white border border-white/20 relative overflow-hidden shadow-lg">
+              <Image
+                src="/logo.png"
+                alt="TextForge Logo"
+                fill
+                className="object-contain p-2"
+              />
+            </div>
             <h1 className="text-2xl font-bold tracking-tight">Create Account</h1>
             <p className="mt-2 text-xs text-slate-400">Join the TextForge generation studio</p>
           </div>

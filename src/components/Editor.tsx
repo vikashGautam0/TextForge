@@ -105,7 +105,7 @@ export default function Editor({
                 value={value}
                 onChange={handleInput}
                 placeholder={placeholder}
-                className="min-h-[700px] w-full rounded-2xl border border-slate-200 bg-white/80 px-6 py-4 text-base text-slate-900 placeholder-slate-400 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+                className="min-h-[400px] sm:min-h-[700px] w-full rounded-2xl border border-slate-200 bg-white/80 px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base text-slate-900 placeholder-slate-400 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
                 style={{
                     resize: "vertical",
                     fontFamily: "system-ui, -apple-system, sans-serif",

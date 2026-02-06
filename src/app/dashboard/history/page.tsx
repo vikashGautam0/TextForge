@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { useUser } from "@clerk/nextjs";
+import Image from "next/image";
+
 
 interface HistoryItem {
     id: string;
@@ -18,6 +20,7 @@ export default function HistoryPage() {
     const { user } = useUser();
     const [history, setHistory] = useState<HistoryItem[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
 
     useEffect(() => {
@@ -95,12 +98,43 @@ export default function HistoryPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
-            <div className="flex h-screen overflow-hidden">
-                {/* Reuse Sidebar Aesthetic */}
-                <aside className="hidden w-72 flex-col border-r border-slate-200 bg-white p-6 lg:flex">
+            <div className="flex h-screen overflow-hidden relative">
+                {/* Mobile Header */}
+                <header className="fixed top-0 left-0 right-0 z-40 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6 lg:hidden">
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setIsSidebarOpen(true)}
+                            className="flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-slate-50"
+                        >
+                            <svg className="h-6 w-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                        <h1 className="text-lg font-bold text-slate-900">History</h1>
+                    </div>
+                </header>
+
+                {/* Mobile Sidebar Backdrop */}
+                {isSidebarOpen && (
+                    <div
+                        className="fixed inset-0 z-50 bg-slate-900/20 backdrop-blur-sm lg:hidden"
+                        onClick={() => setIsSidebarOpen(false)}
+                    />
+                )}
+
+                {/* Sidebar */}
+                <aside className={`
+                    fixed inset-y-0 left-0 z-[60] flex w-72 flex-col border-r border-slate-200 bg-white p-6 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0
+                    ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+                `}>
                     <div className="mb-8 flex items-center gap-3">
-                        <Link href="/dashboard" className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-sm font-bold text-white transition hover:bg-slate-700">
-                            TF
+                        <Link href="/dashboard" className="group relative h-10 w-10 overflow-hidden rounded-xl bg-white border border-slate-100 shadow-sm transition-transform hover:scale-105">
+                            <Image
+                                src="/logo.png"
+                                alt="TextForge Logo"
+                                fill
+                                className="object-contain p-1.5"
+                            />
                         </Link>
                         <div>
                             <h1 className="text-xl font-bold text-slate-900 leading-none">Studio</h1>
@@ -137,7 +171,10 @@ export default function HistoryPage() {
                         </div>
 
                         <button
-                            onClick={clearHistory}
+                            onClick={() => {
+                                clearHistory();
+                                setIsSidebarOpen(false);
+                            }}
                             className="mt-auto rounded-xl border border-red-100 bg-red-50/50 p-4 text-xs font-bold uppercase tracking-widest text-red-600 transition hover:bg-red-50"
                         >
                             Clear All History
@@ -146,9 +183,9 @@ export default function HistoryPage() {
                 </aside>
 
                 {/* Main Content */}
-                <main className="flex-1 overflow-y-auto px-8 py-10">
-                    <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
-                        <header className="flex items-center justify-between">
+                <main className="flex-1 overflow-y-auto px-4 sm:px-8 py-20 lg:py-10">
+                    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 sm:gap-8">
+                        <header className="hidden sm:flex items-center justify-between">
                             <div>
                                 <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Archives</h2>
                                 <h1 className="mt-1 text-3xl font-bold text-slate-900">Generation History</h1>
@@ -175,7 +212,7 @@ export default function HistoryPage() {
                                 {history.map((item) => (
                                     <div
                                         key={item.id}
-                                        className="group relative flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 transition hover:shadow-xl hover:shadow-slate-200/50"
+                                        className="group relative flex flex-col overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 transition hover:shadow-xl hover:shadow-slate-200/50"
                                     >
                                         <div className="flex items-start justify-between">
                                             <div className="space-y-1">
