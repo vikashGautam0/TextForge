@@ -18,7 +18,7 @@ export default function HistoryPage() {
     const { user } = useUser();
     const [history, setHistory] = useState<HistoryItem[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [subscription, setSubscription] = useState<any>(null);
+
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -27,7 +27,7 @@ export default function HistoryPage() {
             // Fetch Subscription for retention logic
             const subRes = await fetch("/api/subscription");
             const subData = await subRes.json();
-            setSubscription(subData);
+
 
             const plan = subData?.plan_type || "starter";
             const query = supabase
@@ -203,7 +203,7 @@ export default function HistoryPage() {
 
                                         <div className="mt-4 flex items-center justify-between gap-4">
                                             <p className="flex-1 truncate text-xs text-slate-500 italic">
-                                                "{item.contentPreview}..."
+                                                &quot;{item.contentPreview}...&quot;
                                             </p>
                                             <div className="flex items-center gap-4">
                                                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300">

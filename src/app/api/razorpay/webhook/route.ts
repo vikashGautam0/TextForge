@@ -48,7 +48,7 @@ export async function POST(req: Request) {
         }
 
         return new NextResponse("OK", { status: 200 });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("[RAZORPAY_WEBHOOK_ERROR]", error);
         return new NextResponse("Error", { status: 400 });
     }

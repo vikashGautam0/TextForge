@@ -28,7 +28,12 @@ function DashboardPageContent() {
   const [success, setSuccess] = useState("");
   const [pdfUrl, setPdfUrl] = useState<string>("");
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
-  const [subscription, setSubscription] = useState<any>(null);
+  interface Subscription {
+    plan_type: 'free' | 'starter' | 'creator' | 'pro' | 'business' | 'lifetime';
+    status: string;
+    pdf_usage_count: number;
+  }
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [exportCount, setExportCount] = useState(0);
   const [fontFamily, setFontFamily] = useState("helvetica");
 

@@ -28,12 +28,12 @@ export default function ApiDocsPage() {
                         <div className="mt-6 overflow-hidden rounded-2xl bg-slate-900 p-6 text-sm font-mono text-white shadow-2xl">
                             <p className="text-emerald-400">POST /api/pdf</p>
                             <div className="mt-4 space-y-2">
-                                <p className="text-slate-500">// Headers</p>
+                                <p className="text-slate-500">{"// Headers"}</p>
                                 <p>Authorization: Bearer YOUR_API_KEY</p>
                                 <p>Content-Type: application/json</p>
                             </div>
                             <div className="mt-6 space-y-2">
-                                <p className="text-slate-500">// Body</p>
+                                <p className="text-slate-500">{"// Body"}</p>
                                 <pre>{`{
   "content": "# Hello World\\nThis is my API generated PDF.",
   "title": "API document",

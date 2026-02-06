@@ -173,6 +173,7 @@ export async function POST(request: Request) {
         let y = PAGE_HEIGHT - MARGIN;
 
         // Helper to draw background/structure for each page
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const drawPageDecoration = (page: any, isFirstPage: boolean = false) => {
             if (template === "code") {
                 // Background - Ray.so "Midnight" Deep Indigo
@@ -233,6 +234,7 @@ export async function POST(request: Request) {
                 return dotY - 45;
             } else if (isFirstPage) {
                 // Draw Header for other templates (only on first page)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const headTheme = theme as any;
                 if (headTheme.headerBg) {
                     page.drawRectangle({
@@ -326,7 +328,9 @@ export async function POST(request: Request) {
         // Helper for text wrapping & pagination with basic syntax highlighting
         const drawWrappedText = (text: string, options: {
             size: number,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             font: any,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             color: any,
             lineHeight?: number,
             indent?: number
@@ -347,7 +351,7 @@ export async function POST(request: Request) {
                 if (!lineText.trim() && template !== "code") continue;
 
                 // Handle Horizontal Wrapping
-                let linesToDraw: string[] = [];
+                const linesToDraw: string[] = [];
                 if (template === "code") {
                     const charWidth = font.widthOfTextAtSize(' ', size);
                     const maxChars = Math.floor(currentContentWidth / charWidth);
@@ -565,10 +569,10 @@ export async function POST(request: Request) {
                 "Cache-Control": "no-store",
             },
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("PDF generation error:", error);
         return NextResponse.json(
-            { error: error.message || "Failed to generate PDF" },
+            { error: error instanceof Error ? error.message : "Failed to generate PDF" },
             { status: 500 }
         );
     }
