@@ -18,7 +18,7 @@ export default function TermsPage() {
 
                     <section>
                         <h2 className="text-xl font-bold text-slate-900">2. Description of Service</h2>
-                        <p className="mt-4">TextForge provides an AI-powered document formatting and PDF generation service. The service is provided "as is" and we reserve the right to modify or discontinue features at any time.</p>
+                        <p className="mt-4">TextForge provides an AI-powered document formatting and PDF generation service. The service is provided &quot;as is&quot; and we reserve the right to modify or discontinue features at any time.</p>
                     </section>
 
                     <section>
@@ -32,6 +32,6 @@ export default function TermsPage() {
                     </section>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

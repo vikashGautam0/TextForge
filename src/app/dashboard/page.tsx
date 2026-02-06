@@ -127,7 +127,7 @@ function DashboardPageContent() {
 
     const timer = setTimeout(generatePreview, 1000); // 1s debounce
     return () => clearTimeout(timer);
-  }, [content, formattedHTML, template, title, fontFamily, accentColor, featureImage]);
+  }, [content, formattedHTML, template, title, fontFamily, accentColor, featureImage, pdfUrl]);
 
   // AI Format Handler
   const handleAIFormat = async (task: "format" | "summarize" | "expand" | "refine" = "format") => {
@@ -158,8 +158,8 @@ function DashboardPageContent() {
 
       const data = await response.json();
       setFormattedHTML(data.formattedHTML);
-    } catch (err: any) {
-      setError(err.message || "Failed to format content");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to format content");
     } finally {
       setIsFormatting(false);
     }
@@ -278,8 +278,8 @@ function DashboardPageContent() {
 
       // Success feedback
       setError("");
-    } catch (err: any) {
-      setError(err.message || "Failed to generate PDF");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to generate PDF");
     } finally {
       setIsGenerating(false);
     }
@@ -362,7 +362,7 @@ function DashboardPageContent() {
                 ].map((action) => (
                   <button
                     key={action.task}
-                    onClick={() => handleAIFormat(action.task as any)}
+                    onClick={() => handleAIFormat(action.task as "format" | "summarize" | "expand" | "refine")}
                     disabled={isFormatting || !content.trim() || ["free", "starter"].includes(subscription?.plan_type || "starter")}
                     className="group flex items-center justify-between rounded-xl px-4 py-2 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 disabled:opacity-50"
                   >
@@ -733,7 +733,7 @@ This is a paragraph with some important information.
                       Active Prompt
                     </p>
                     <p className="text-xs leading-relaxed text-slate-500 italic">
-                      "{title || "Document generation"} with {template} aesthetic and structured layout optimization."
+                      &quot;{title || "Document generation"}&quot; with {template} aesthetic and structured layout optimization.
                     </p>
                   </div>
 

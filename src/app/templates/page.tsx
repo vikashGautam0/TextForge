@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { UserButton } from "@clerk/nextjs";
 
 const TEMPLATES = [
@@ -62,10 +63,16 @@ export default function TemplatesPage() {
                     {TEMPLATES.map((tpl) => (
                         <div key={tpl.id} className="group overflow-hidden rounded-3xl border border-slate-200 bg-white transition hover:shadow-2xl hover:shadow-slate-200/50">
                             <div className="relative h-48 overflow-hidden bg-slate-100">
-                                <img src={tpl.previewImg} alt={tpl.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
+                                <Image
+                                    src={tpl.previewImg}
+                                    alt={tpl.name}
+                                    fill
+                                    className="object-cover transition duration-500 group-hover:scale-110"
+                                    unoptimized
+                                />
                                 <div className="absolute top-4 right-4">
                                     <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-lg ${tpl.tier === 'Starter' ? 'bg-slate-900' :
-                                            tpl.tier === 'Creator' ? 'bg-emerald-500' : 'bg-amber-500'
+                                        tpl.tier === 'Creator' ? 'bg-emerald-500' : 'bg-amber-500'
                                         }`}>
                                         {tpl.tier}
                                     </span>

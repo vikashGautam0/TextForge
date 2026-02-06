@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 const templateShowcase = [
@@ -102,7 +103,7 @@ export default function Home() {
         name: "TextForge Studio",
         description: `Upgrade to ${plan} plan`,
         order_id: order.id,
-        handler: function (response: any) {
+        handler: function () {
           // Success! Redirect to dashboard with success param
           window.location.href = "/dashboard?success=true";
         },
@@ -201,10 +202,13 @@ export default function Home() {
 
           {/* Premium Hero Image with Glassmorphism */}
           <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-2xl transition hover:scale-[1.01] duration-500 group">
-            <img
+            <Image
               src="https://plus.unsplash.com/premium_photo-1678566153919-86c4ba4216f1?w=800&auto=format&fit=crop&q=80"
               alt="Modern Document Design"
+              width={800}
+              height={400}
               className="w-full h-[400px] object-cover"
+              unoptimized
             />
             <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-60" />
             <div className="absolute bottom-6 left-6 right-6 rounded-2xl bg-white/40 p-4 backdrop-blur-xl border border-white/40 shadow-xl">
