@@ -26,7 +26,7 @@ export default function ApiDocsPage() {
                         <h2 className="text-2xl font-bold text-slate-900">Endpoint: Generate PDF</h2>
                         <p className="mt-2 text-slate-600">Send content to generate a high-quality PDF buffer.</p>
                         <div className="mt-6 overflow-hidden rounded-2xl bg-slate-900 p-6 text-sm font-mono text-white shadow-2xl">
-                            <p className="text-emerald-400">POST /api/pdf</p>
+                            <p className="text-emerald-400">POST {process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.textforge.studio"}/pdf</p>
                             <div className="mt-4 space-y-2">
                                 <p className="text-slate-500">{"// Headers"}</p>
                                 <p>Authorization: Bearer YOUR_API_KEY</p>

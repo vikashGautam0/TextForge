@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useAuth } from "@clerk/nextjs";
 import Image from "next/image";
+import { fetchFromBackend } from "@/lib/api";
 
 
 interface HistoryItem {
@@ -23,12 +24,14 @@ export default function HistoryPage() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
 
+    const { getToken } = useAuth();
+
     useEffect(() => {
         const fetchHistory = async () => {
             if (!user?.id) return;
 
             // Fetch Subscription for retention logic
-            const subRes = await fetch("/api/subscription");
+            const subRes = await fetchFromBackend("/subscription", {}, getToken);
             const subData = await subRes.json();
 
 

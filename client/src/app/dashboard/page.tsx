@@ -5,9 +5,10 @@ import Link from "next/link";
 import Editor from "@/components/Editor";
 import { type TemplateType } from "@/components/TemplatePicker";
 import { supabase } from "@/lib/supabase";
-import { UserButton, useUser, SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import { UserButton, useUser, useAuth, SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { fetchFromBackend } from "@/lib/api";
 
 export default function DashboardPage() {
   return (
@@ -46,15 +47,17 @@ function DashboardPageContent() {
 
   const searchParams = useSearchParams();
 
+  const { getToken } = useAuth();
+
   const fetchSubscription = useCallback(async () => {
     try {
-      const res = await fetch("/api/subscription");
+      const res = await fetchFromBackend("/subscription", {}, getToken);
       const data = await res.json();
       setSubscription(data);
     } catch (err) {
       console.error("Failed to fetch subscription", err);
     }
-  }, []);
+  }, [getToken]);
 
   // Handle URL params (Success/Cancel from Payment)
   useEffect(() => {
@@ -98,9 +101,8 @@ function DashboardPageContent() {
 
       setIsPreviewLoading(true);
       try {
-        const response = await fetch("/api/pdf", {
+        const response = await fetchFromBackend("/pdf", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             content: contentToUse,
             title,
@@ -110,7 +112,7 @@ function DashboardPageContent() {
             featureImage,
             _t: Date.now() // Cache busting
           }),
-        });
+        }, getToken);
 
         if (response.ok) {
           const blob = await response.blob();
@@ -174,16 +176,15 @@ function DashboardPageContent() {
     setError("");
 
     try {
-      const response = await fetch("/api/ai-format", {
+      const response = await fetchFromBackend("/ai/format", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           text: content,
           template,
           tone: "professional",
           task,
         }),
-      });
+      }, getToken);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -275,9 +276,8 @@ function DashboardPageContent() {
     setError("");
 
     try {
-      const response = await fetch("/api/pdf", {
+      const response = await fetchFromBackend("/pdf", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           content: contentToUse,
           title,
@@ -287,7 +287,7 @@ function DashboardPageContent() {
           accentColor,
           featureImage,
         }),
-      });
+      }, getToken);
 
       if (!response.ok) {
         const errorData = await response.json();

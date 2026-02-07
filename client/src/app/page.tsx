@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, UserButton, useAuth } from "@clerk/nextjs";
 import Image from "next/image";
+import { fetchFromBackend } from "@/lib/api";
 
 
 const templateShowcase = [
@@ -67,43 +68,6 @@ const templateShowcase = [
       </div>
     ),
   },
-  {
-    id: "modern",
-    name: "Modern Portfolio",
-    description: "Vibrant accents, bold typography, and dynamic layouts for creatives.",
-    color: "bg-indigo-600",
-    textColor: "text-white",
-    dots: ["#ffffff", "#ffffff", "#ffffff"],
-    elements: (
-      <div className="space-y-4">
-        <div className="h-10 w-2/3 rounded-lg bg-white/20" />
-        <div className="h-2 w-full rounded bg-white/10" />
-        <div className="h-2 w-5/6 rounded bg-white/10" />
-        <div className="mt-4 flex gap-2">
-          <div className="h-8 w-8 rounded-full bg-white/30" />
-          <div className="h-8 w-8 rounded-full bg-white/30" />
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: "minimal",
-    name: "Minimalist",
-    description: "Ultra-clean spacing, focus on white space and precision typography.",
-    color: "bg-white",
-    textColor: "text-slate-900",
-    dots: ["#f1f5f9", "#f1f5f9", "#f1f5f9"],
-    elements: (
-      <div className="space-y-6 text-center">
-        <div className="mx-auto h-px w-12 bg-slate-900" />
-        <div className="mx-auto h-4 w-1/2 rounded bg-slate-100" />
-        <div className="space-y-2">
-          <div className="h-2 w-full rounded bg-slate-50" />
-          <div className="h-2 w-full rounded bg-slate-50" />
-        </div>
-      </div>
-    ),
-  },
 ];
 
 const features = [
@@ -144,13 +108,14 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
+  const { getToken } = useAuth();
+
   const handleCheckout = async (plan: string) => {
     try {
-      const response = await fetch("/api/razorpay/order", {
+      const response = await fetchFromBackend("/razorpay/order", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan }),
-      });
+      }, getToken);
 
       const order = await response.json();
 
@@ -306,7 +271,7 @@ export default function Home() {
               href="/dashboard"
               className="rounded-full bg-slate-900 px-10 py-4 text-sm font-bold uppercase tracking-widest text-white transition hover:bg-slate-700 shadow-xl shadow-slate-200"
             >
-              Start Generating
+              Start Generating for Free
             </Link>
             <a
               href="#pricing"
