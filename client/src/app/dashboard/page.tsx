@@ -356,9 +356,11 @@ function DashboardPageContent() {
               <button onClick={() => setView('preview')} className={`flex w-full items-center gap-2.5 rounded-lg p-2 text-left text-[11px] font-medium transition ${view === 'preview' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-600 hover:bg-slate-50'}`}>
                 <span>👁️</span> Preview
               </button>
-              <Link href="/dashboard/history" className="flex w-full items-center gap-2.5 rounded-lg p-2 text-left text-[11px] font-medium text-slate-600 transition hover:bg-slate-50">
-                <span>📜</span> History
-              </Link>
+              <SignedIn>
+                <Link href="/dashboard/history" className="flex w-full items-center gap-2.5 rounded-lg p-2 text-left text-[11px] font-medium text-slate-600 transition hover:bg-slate-50">
+                  <span>📜</span> History
+                </Link>
+              </SignedIn>
             </div>
           </div>
 

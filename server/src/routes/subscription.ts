@@ -1,15 +1,15 @@
 import express from "express";
-import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
+import { ClerkExpressWithAuth } from "@clerk/clerk-sdk-node";
 import { supabase } from "../index.js";
 
 const router = express.Router();
 
-router.get("/", ClerkExpressRequireAuth() as any, async (req: any, res) => {
+router.get("/", ClerkExpressWithAuth() as any, async (req: any, res) => {
     try {
-        const userId = req.auth.userId;
+        const userId = req.auth?.userId;
 
         if (!userId) {
-            return res.status(401).send("Unauthorized");
+            return res.json({ plan_type: "free", status: "none", pdf_usage_count: 0, ai_usage_count: 0 });
         }
 
         const { data: subscription, error } = await supabase
