@@ -553,10 +553,18 @@ function DashboardPageContent() {
                     onChange={(e) => setTemplate(e.target.value as TemplateType)}
                     className="bg-transparent text-[10px] sm:text-[11px] font-bold text-slate-900 outline-none"
                   >
-                    <option value="simple">Minimalist Pro</option>
-                    <option value="academic">Academic Thesis</option>
-                    <option value="professional">Executive</option>
+                    <option value="simple">Simple</option>
+                    <option value="academic">Academic</option>
+                    <option value="professional">Professional</option>
                     <option value="code">Technical</option>
+                    <option value="modern">Modern</option>
+                    <option value="minimal">Minimal</option>
+                    <option value="invoice">Invoice</option>
+                    <option value="resume">Resume</option>
+                    <option value="creative">Creative</option>
+                    <option value="letter">Letter</option>
+                    <option value="report">Report</option>
+                    <option value="contract">Contract</option>
                   </select>
                 </div>
 

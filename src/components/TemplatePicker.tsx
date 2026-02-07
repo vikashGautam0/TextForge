@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export type TemplateType = "simple" | "academic" | "professional" | "code";
+export type TemplateType = "simple" | "academic" | "professional" | "code" | "modern" | "minimal" | "invoice" | "resume" | "creative" | "letter" | "report" | "contract";
 
 interface Template {
     id: TemplateType;
@@ -107,6 +107,149 @@ const templates: Template[] = [
       </div>
     `,
     },
+    {
+        id: "modern",
+        name: "Modern",
+        description: "Vibrant and punchy design for brochures and portfolios",
+        preview: "Bold colors, large headings, and dynamic layouts",
+        icon: "✨",
+        cssStyles: `
+      body { font-family: 'Outfit', sans-serif; color: #1e293b; }
+      h1 { font-size: 3.5rem; font-weight: 900; color: #4f46e5; margin-bottom: 1.5rem; letter-spacing: -0.05em; }
+      h2 { font-size: 2rem; font-weight: 700; color: #1e293b; margin-top: 2rem; }
+      p { font-size: 1.125rem; line-height: 1.6; color: #475569; }
+    `,
+        htmlSnippet: `
+      <div style="padding: 4rem; max-width: 900px; margin: 0 auto;">
+        <h1>{{title}}</h1>
+        <div style="height: 4px; width: 60px; background: #4f46e5; margin-bottom: 2rem;"></div>
+        <div>{{content}}</div>
+      </div>
+    `,
+    },
+    {
+        id: "minimal",
+        name: "Minimal",
+        description: "Ultra-clean and spacing-focused layout",
+        preview: "Focus on white space and typography",
+        icon: "⚪",
+        cssStyles: `
+      body { font-family: 'Inter', sans-serif; color: #000; font-weight: 300; }
+      h1 { font-size: 1.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 3rem; text-align: center; }
+      p { font-size: 0.9rem; line-height: 2; margin-bottom: 2rem; }
+    `,
+        htmlSnippet: `
+      <div style="padding: 5rem; max-width: 700px; margin: 0 auto;">
+        <h1>{{title}}</h1>
+        <div>{{content}}</div>
+      </div>
+    `,
+    },
+    {
+        id: "invoice",
+        name: "Invoice",
+        description: "Clean and structured design for billing",
+        preview: "Tables, totals, and professional billing layout",
+        icon: "🧾",
+        cssStyles: `
+      body { font-family: 'Helvetica', sans-serif; color: #333; }
+      h1 { font-size: 1.5rem; color: #1a1a1a; margin-bottom: 2rem; }
+    `,
+        htmlSnippet: `
+      <div style="padding: 3rem; max-width: 800px; margin: 0 auto;">
+        <h1>INVOICE - {{title}}</h1>
+        <div>{{content}}</div>
+      </div>
+    `,
+    },
+    {
+        id: "resume",
+        name: "Resume",
+        description: "Professional layout for career documents",
+        preview: "Skills, experience, and contact info focus",
+        icon: "👤",
+        cssStyles: `
+      body { font-family: 'Calibri', sans-serif; color: #2d3748; }
+      h1 { font-size: 2.25rem; font-weight: 700; color: #1a202c; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1rem; }
+    `,
+        htmlSnippet: `
+      <div style="padding: 3rem; max-width: 850px; margin: 0 auto;">
+        <h1>{{title}}</h1>
+        <div>{{content}}</div>
+      </div>
+    `,
+    },
+    {
+        id: "creative",
+        name: "Creative",
+        description: "Artistic layout with unique color accents",
+        preview: "Good for design briefs and artistic portfolios",
+        icon: "🎨",
+        cssStyles: `
+      body { font-family: 'Montserrat', sans-serif; background: #fffcf0; color: #1a202c; }
+      h1 { font-size: 3rem; color: #e53e3e; text-shadow: 2px 2px #feb2b2; }
+    `,
+        htmlSnippet: `
+      <div style="padding: 4rem; max-width: 800px; margin: 0 auto;">
+        <h1>{{title}}</h1>
+        <div>{{content}}</div>
+      </div>
+    `,
+    },
+    {
+        id: "letter",
+        name: "Letter",
+        description: "Classic personal or business letter format",
+        preview: "Sender/Recipient blocks and formal sign-offs",
+        icon: "✉️",
+        cssStyles: `
+      body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; color: #000; }
+    `,
+        htmlSnippet: `
+      <div style="padding: 4rem; max-width: 650px; margin: 0 auto;">
+        <h1>{{title}}</h1>
+        <div style="margin-top: 2rem;">{{content}}</div>
+      </div>
+    `,
+    },
+    {
+        id: "report",
+        name: "Report",
+        description: "Structured corporate report with table of contents style",
+        preview: "Project summaries and milestone tracking",
+        icon: "📊",
+        cssStyles: `
+      body { font-family: 'Arial', sans-serif; color: #333; }
+      h1 { color: #2c5282; border-bottom: 2px solid #2c5282; padding-bottom: 0.5rem; }
+    `,
+        htmlSnippet: `
+      <div style="padding: 3rem; max-width: 850px; margin: 0 auto;">
+        <h1>REPORT: {{title}}</h1>
+        <div>{{content}}</div>
+      </div>
+    `,
+    },
+    {
+        id: "contract",
+        name: "Contract",
+        description: "Formal legal document layout",
+        preview: "Clauses, terms, and signature lines",
+        icon: "🖋️",
+        cssStyles: `
+      body { font-family: 'Garamond', serif; font-size: 11pt; color: #000; }
+      h1 { font-size: 14pt; text-align: center; text-transform: uppercase; font-weight: bold; }
+    `,
+        htmlSnippet: `
+      <div style="padding: 4rem; max-width: 700px; margin: 0 auto;">
+        <h1>{{title}}</h1>
+        <div style="margin-top: 3rem;">{{content}}</div>
+        <div style="margin-top: 5rem; display: flex; justify-content: space-between;">
+          <div style="border-top: 1px solid #000; width: 200px; text-align: center;">Signature</div>
+          <div style="border-top: 1px solid #000; width: 200px; text-align: center;">Date</div>
+        </div>
+      </div>
+    `,
+    },
 ];
 
 interface TemplatePickerProps {
@@ -146,8 +289,8 @@ export default function TemplatePicker({
                             onMouseEnter={() => setHoveredId(template.id)}
                             onMouseLeave={() => setHoveredId(null)}
                             className={`group relative overflow-hidden rounded-2xl border-2 p-5 text-left transition-all ${isSelected
-                                    ? "border-slate-900 bg-slate-900 text-white shadow-xl"
-                                    : "border-slate-200 bg-white/80 hover:border-slate-300 hover:shadow-lg"
+                                ? "border-slate-900 bg-slate-900 text-white shadow-xl"
+                                : "border-slate-200 bg-white/80 hover:border-slate-300 hover:shadow-lg"
                                 }`}
                         >
                             {/* Icon */}

@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 type PDFGeneratePayload = {
     content: string;
     title?: string;
-    template?: "simple" | "academic" | "professional" | "code";
+    template?: "simple" | "academic" | "professional" | "code" | "modern" | "minimal" | "invoice" | "resume" | "creative" | "letter" | "report" | "contract";
     author?: string;
     fontFamily?: string;
     accentColor?: string;
@@ -173,6 +173,72 @@ export async function POST(request: Request) {
                 headerText: rgb(0.9, 0.95, 1),
                 font: fontMono,
                 titleFont: fontMono
+            },
+            modern: {
+                primary: rgb(0.1, 0.1, 0.2),
+                secondary: rgb(0.3, 0.3, 0.5),
+                accent: rgb(0.3, 0.3, 0.9),
+                bg: rgb(1, 1, 1),
+                headerBg: rgb(0.98, 0.98, 1),
+                font: font,
+                titleFont: fontBold
+            },
+            minimal: {
+                primary: rgb(0, 0, 0),
+                secondary: rgb(0.2, 0.2, 0.2),
+                accent: rgb(0.1, 0.1, 0.1),
+                bg: rgb(1, 1, 1),
+                font: font,
+                titleFont: fontBold
+            },
+            invoice: {
+                primary: rgb(0.2, 0.2, 0.2),
+                secondary: rgb(0.4, 0.4, 0.4),
+                accent: rgb(0, 0.5, 0.5),
+                bg: rgb(1, 1, 1),
+                headerBg: rgb(0.97, 0.98, 0.98),
+                font: font,
+                titleFont: fontBold
+            },
+            resume: {
+                primary: rgb(0.15, 0.2, 0.3),
+                secondary: rgb(0.3, 0.4, 0.5),
+                accent: rgb(0.1, 0.3, 0.6),
+                bg: rgb(1, 1, 1),
+                font: font,
+                titleFont: fontBold
+            },
+            creative: {
+                primary: rgb(0.9, 0.2, 0.2),
+                secondary: rgb(0.4, 0.4, 0.4),
+                accent: rgb(0.9, 0.5, 0),
+                bg: rgb(1, 0.99, 0.95),
+                font: font,
+                titleFont: fontBold
+            },
+            letter: {
+                primary: rgb(0.1, 0.1, 0.1),
+                secondary: rgb(0.3, 0.3, 0.3),
+                accent: rgb(0.1, 0.1, 0.1),
+                bg: rgb(1, 1, 1),
+                font: font,
+                titleFont: fontBold
+            },
+            report: {
+                primary: rgb(0.15, 0.3, 0.5),
+                secondary: rgb(0.3, 0.4, 0.5),
+                accent: rgb(0.15, 0.3, 0.5),
+                bg: rgb(1, 1, 1),
+                font: font,
+                titleFont: fontBold
+            },
+            contract: {
+                primary: rgb(0, 0, 0),
+                secondary: rgb(0.1, 0.1, 0.1),
+                accent: rgb(0, 0, 0),
+                bg: rgb(1, 1, 1),
+                font: font,
+                titleFont: fontBold
             }
         };
 

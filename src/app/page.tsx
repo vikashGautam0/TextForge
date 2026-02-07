@@ -67,6 +67,43 @@ const templateShowcase = [
       </div>
     ),
   },
+  {
+    id: "modern",
+    name: "Modern Portfolio",
+    description: "Vibrant accents, bold typography, and dynamic layouts for creatives.",
+    color: "bg-indigo-600",
+    textColor: "text-white",
+    dots: ["#ffffff", "#ffffff", "#ffffff"],
+    elements: (
+      <div className="space-y-4">
+        <div className="h-10 w-2/3 rounded-lg bg-white/20" />
+        <div className="h-2 w-full rounded bg-white/10" />
+        <div className="h-2 w-5/6 rounded bg-white/10" />
+        <div className="mt-4 flex gap-2">
+          <div className="h-8 w-8 rounded-full bg-white/30" />
+          <div className="h-8 w-8 rounded-full bg-white/30" />
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "minimal",
+    name: "Minimalist",
+    description: "Ultra-clean spacing, focus on white space and precision typography.",
+    color: "bg-white",
+    textColor: "text-slate-900",
+    dots: ["#f1f5f9", "#f1f5f9", "#f1f5f9"],
+    elements: (
+      <div className="space-y-6 text-center">
+        <div className="mx-auto h-px w-12 bg-slate-900" />
+        <div className="mx-auto h-4 w-1/2 rounded bg-slate-100" />
+        <div className="space-y-2">
+          <div className="h-2 w-full rounded bg-slate-50" />
+          <div className="h-2 w-full rounded bg-slate-50" />
+        </div>
+      </div>
+    ),
+  },
 ];
 
 const features = [
