@@ -560,7 +560,9 @@ function DashboardPageContent() {
                     <option value="modern">Modern</option>
                     <option value="minimal">Minimal</option>
                     <option value="invoice">Invoice</option>
-                    <option value="resume">Resume</option>
+                    <option value="resume">Resume (Classic)</option>
+                    <option value="resume_modern">Resume (Modern)</option>
+                    <option value="resume_executive">Resume (Executive)</option>
                     <option value="creative">Creative</option>
                     <option value="letter">Letter</option>
                     <option value="report">Report</option>
