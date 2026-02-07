@@ -13,12 +13,12 @@ export default function TermsPage() {
                 <div className="mt-12 space-y-8 text-slate-600 leading-relaxed">
                     <section>
                         <h2 className="text-xl font-bold text-slate-900">1. Acceptance of Terms</h2>
-                        <p className="mt-4">By accessing and using TextForge, you agree to comply with and be bound by these Terms of Service. If you do not agree to these terms, please do not use the service.</p>
+                        <p className="mt-4">By accessing and using TextFroge, you agree to comply with and be bound by these Terms of Service. If you do not agree to these terms, please do not use the service.</p>
                     </section>
 
                     <section>
                         <h2 className="text-xl font-bold text-slate-900">2. Description of Service</h2>
-                        <p className="mt-4">TextForge provides an AI-powered document formatting and PDF generation service. The service is provided &quot;as is&quot; and we reserve the right to modify or discontinue features at any time.</p>
+                        <p className="mt-4">TextFroge provides an AI-powered document formatting and PDF generation service. The service is provided &quot;as is&quot; and we reserve the right to modify or discontinue features at any time.</p>
                     </section>
 
                     <section>

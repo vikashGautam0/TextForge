@@ -134,7 +134,7 @@ export default function HistoryPage() {
                         <Link href="/dashboard" className="group relative h-10 w-10 overflow-hidden rounded-xl bg-white border border-slate-100 shadow-sm transition-transform hover:scale-105">
                             <Image
                                 src="/logo.png"
-                                alt="TextForge Logo"
+                                alt="TextFroge Logo"
                                 fill
                                 className="object-contain p-1.5"
                             />

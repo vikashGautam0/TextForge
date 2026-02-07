@@ -123,7 +123,7 @@ export default function Home() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: "INR",
-        name: "TextForge Studio",
+        name: "TextFroge Studio",
         description: `Upgrade to ${plan} plan`,
         order_id: order.id,
         handler: function () {
@@ -151,13 +151,13 @@ export default function Home() {
             <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white border border-slate-100 transition-transform group-hover:scale-110 shadow-sm">
               <Image
                 src="/logo.png"
-                alt="TextForge Logo"
+                alt="TextFroge Logo"
                 fill
                 className="object-contain p-1.5"
               />
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-900 leading-none">TextForge</p>
+              <p className="text-sm font-bold text-slate-900 leading-none">TextFroge</p>
               <p className="text-[8px] uppercase tracking-[0.2em] text-slate-400 font-bold">Studio</p>
             </div>
           </Link>
@@ -263,7 +263,7 @@ export default function Home() {
             From Thought to PDF, <span className="text-slate-400 font-medium">Instantly.</span>
           </h1>
           <p className="max-w-2xl text-lg leading-relaxed text-slate-500">
-            TextForge Studio transforms your ideas into professionally branded documents.
+            TextFroge Studio transforms your ideas into professionally branded documents.
             No manual formatting. No design skills required. Just pure AI efficiency.
           </p>
           <div className="flex flex-col w-full gap-4 sm:flex-row sm:justify-center mt-4">
@@ -520,12 +520,12 @@ export default function Home() {
               <div className="relative h-6 w-6 overflow-hidden rounded bg-white border border-slate-100 shadow-sm">
                 <Image
                   src="/logo.png"
-                  alt="TextForge Logo"
+                  alt="TextFroge Logo"
                   fill
                   className="object-contain p-1"
                 />
               </div>
-              <p className="text-sm font-bold text-slate-900 uppercase tracking-widest leading-none mt-1">TextForge</p>
+              <p className="text-sm font-bold text-slate-900 uppercase tracking-widest leading-none mt-1">TextFroge</p>
             </div>
             <div className="flex gap-8 text-xs font-semibold text-slate-500">
               <a href="#templates" className="hover:text-slate-900 transition font-bold">Templates</a>

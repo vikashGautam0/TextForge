@@ -12,7 +12,7 @@ type GeneratePayload = {
 router.post("/", async (req, res) => {
     try {
         const body = req.body as GeneratePayload;
-        const title = body.title?.trim() || "TextForge Brief";
+        const title = body.title?.trim() || "TextFroge Brief";
         const prompt =
             body.prompt?.trim() ||
             "Summarize Q4 metrics and highlight pipeline risk for leadership.";
@@ -116,7 +116,7 @@ router.post("/", async (req, res) => {
         const pdfBytes = await pdfDoc.save();
 
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename=textforge-demo.pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=textfroge-demo.pdf');
         res.send(Buffer.from(pdfBytes));
 
     } catch (error: any) {

@@ -31,7 +31,7 @@ export default function AdminPanel() {
     return (
         <div className="min-h-screen bg-slate-50">
             <aside className="fixed inset-y-0 left-0 w-64 border-r bg-white p-6 hidden md:block">
-                <h2 className="text-xl font-bold text-slate-900 mb-8">TextForge Admin</h2>
+                <h2 className="text-xl font-bold text-slate-900 mb-8">TextFroge Admin</h2>
                 <nav className="space-y-1">
                     <button className="flex w-full items-center gap-3 rounded-xl bg-slate-900 px-4 py-2 text-sm font-bold text-white">Dashboard</button>
                     <button className="flex w-full items-center gap-3 rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">Users</button>

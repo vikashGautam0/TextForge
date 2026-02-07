@@ -18,7 +18,7 @@ export default function PrivacyPage() {
 
                     <section>
                         <h2 className="text-xl font-bold text-slate-900">2. Document Content</h2>
-                        <p className="mt-4">Text entered into TextForge is processed by AI models (Mistral AI) for formatting purposes. We do not use your document content to train our internal models.</p>
+                        <p className="mt-4">Text entered into TextFroge is processed by AI models (Mistral AI) for formatting purposes. We do not use your document content to train our internal models.</p>
                     </section>
 
                     <section>

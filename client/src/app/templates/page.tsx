@@ -49,12 +49,12 @@ export default function TemplatesPage() {
                         <div className="relative h-7 w-7 overflow-hidden rounded bg-white border border-slate-100 shadow-sm transition-transform group-hover:scale-110">
                             <Image
                                 src="/logo.png"
-                                alt="TextForge Logo"
+                                alt="TextFroge Logo"
                                 fill
                                 className="object-contain p-1"
                             />
                         </div>
-                        <span className="text-sm font-bold text-slate-900">TextForge</span>
+                        <span className="text-sm font-bold text-slate-900">TextFroge</span>
                     </Link>
                     <div className="flex items-center gap-4">
                         <Link href="/dashboard" className="text-xs font-bold text-slate-400 hover:text-slate-900 transition uppercase tracking-widest">Dashboard</Link>

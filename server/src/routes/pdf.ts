@@ -531,11 +531,11 @@ router.post("/", ClerkExpressWithAuth() as any, async (req: any, res) => {
         processContent(sanitizedContent);
 
         const pages = pdfDoc.getPages();
-        const logoUrl = "https://textforge-studio.vercel.app";
+        const logoUrl = "https://textfroge-studio.vercel.app";
 
         pages.forEach((page, idx) => {
             const footerY = 25;
-            const logoText = "TextForge Studio";
+            const logoText = "TextFroge Studio";
             const textWidth = fontBold.widthOfTextAtSize(logoText, 9);
             page.drawText(logoText, {
                 x: MARGIN,

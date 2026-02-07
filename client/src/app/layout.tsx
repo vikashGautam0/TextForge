@@ -14,7 +14,7 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TextForge — AI PDF Generation for Teams",
+  title: "TextFroge — AI PDF Generation for Teams",
   description:
     "Generate brand-ready PDFs from prompts, templates, and data in minutes.",
 };

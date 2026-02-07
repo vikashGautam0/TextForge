@@ -331,7 +331,7 @@ function DashboardPageContent() {
           <Link href="/" className="group relative h-10 w-10 overflow-hidden rounded-xl bg-white border border-slate-100 shadow-sm transition-transform hover:scale-105">
             <Image
               src="/logo.png"
-              alt="TextForge Logo"
+              alt="TextFroge Logo"
               fill
               className="object-contain p-1.5"
             />
@@ -458,7 +458,7 @@ function DashboardPageContent() {
             <div className="mt-4 overflow-hidden rounded-2xl border border-indigo-100 bg-indigo-600 p-4 transition-all hover:scale-[1.02]">
               <div className="flex items-center justify-between">
                 <span className="rounded-full bg-white/20 px-2 py-0.5 text-[8px] font-bold text-white uppercase italic">Sponsor</span>
-                <span className="text-[8px] text-indigo-100 font-medium">TextForge Pro</span>
+                <span className="text-[8px] text-indigo-100 font-medium">TextFroge Pro</span>
               </div>
               <p className="mt-2 text-[11px] font-bold text-white leading-tight">Unlock Unlimited AI Format & Premium Exports</p>
               <Link href="/#pricing" className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-white py-2 text-[10px] font-black text-indigo-600 shadow-xl transition active:scale-95">

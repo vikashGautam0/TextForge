@@ -14,13 +14,13 @@ export default function SignUpPage() {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white border border-white/20 relative overflow-hidden shadow-lg">
               <Image
                 src="/logo.png"
-                alt="TextForge Logo"
+                alt="TextFroge Logo"
                 fill
                 className="object-contain p-2"
               />
             </div>
             <h1 className="text-2xl font-bold tracking-tight">Create Account</h1>
-            <p className="mt-2 text-xs text-slate-400">Join the TextForge generation studio</p>
+            <p className="mt-2 text-xs text-slate-400">Join the TextFroge generation studio</p>
           </div>
 
           <SignUp

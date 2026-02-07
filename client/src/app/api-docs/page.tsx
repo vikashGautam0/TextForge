@@ -7,18 +7,18 @@ export default function ApiDocsPage() {
         <div className="min-h-screen bg-white">
             <nav className="border-b bg-white px-6 py-4">
                 <div className="mx-auto flex max-w-7xl items-center justify-between">
-                    <Link href="/" className="text-xl font-bold text-slate-900">TextForge Docs</Link>
+                    <Link href="/" className="text-xl font-bold text-slate-900">TextFroge Docs</Link>
                     <Link href="/dashboard" className="text-sm font-bold text-slate-600">Studio Dashboard</Link>
                 </div>
             </nav>
 
             <main className="mx-auto max-w-4xl px-6 py-16">
                 <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">API Documentation</h1>
-                <p className="mt-4 text-xl text-slate-500">Automate your document generation workflow with the TextForge API.</p>
+                <p className="mt-4 text-xl text-slate-500">Automate your document generation workflow with the TextFroge API.</p>
 
                 <div className="mt-12 rounded-3xl bg-amber-50 p-6 border border-amber-100">
                     <h2 className="text-lg font-bold text-amber-900">Business Tier Required</h2>
-                    <p className="mt-2 text-sm text-amber-800">The TextForge API is currently exclusive to our Business plan users. Please upgrade your account to generate your API keys.</p>
+                    <p className="mt-2 text-sm text-amber-800">The TextFroge API is currently exclusive to our Business plan users. Please upgrade your account to generate your API keys.</p>
                 </div>
 
                 <section className="mt-16 space-y-12">
@@ -26,7 +26,7 @@ export default function ApiDocsPage() {
                         <h2 className="text-2xl font-bold text-slate-900">Endpoint: Generate PDF</h2>
                         <p className="mt-2 text-slate-600">Send content to generate a high-quality PDF buffer.</p>
                         <div className="mt-6 overflow-hidden rounded-2xl bg-slate-900 p-6 text-sm font-mono text-white shadow-2xl">
-                            <p className="text-emerald-400">POST {process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.textforge.studio"}/pdf</p>
+                            <p className="text-emerald-400">POST {process.env.NEXT_PUBLIC_BACKEND_URL || "https://api.textfroge.studio"}/pdf</p>
                             <div className="mt-4 space-y-2">
                                 <p className="text-slate-500">{"// Headers"}</p>
                                 <p>Authorization: Bearer YOUR_API_KEY</p>
@@ -66,7 +66,7 @@ export default function ApiDocsPage() {
             </main>
 
             <footer className="mt-20 border-t py-12 text-center text-sm text-slate-400">
-                &copy; 2026 TextForge Studio. All rights reserved.
+                &copy; 2026 TextFroge Studio. All rights reserved.
             </footer>
         </div>
     );
