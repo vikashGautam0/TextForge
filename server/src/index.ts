@@ -24,7 +24,11 @@ export const mistral = new Mistral({
     apiKey: process.env.MISTRAL_API_KEY!,
 });
 
-app.use(cors());
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
 app.use(express.json({ limit: "50mb" })); // Increased limit for base64 images
 app.use(morgan("dev"));
 

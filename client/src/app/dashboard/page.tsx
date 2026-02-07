@@ -8,7 +8,7 @@ import { supabase } from "@/lib/supabase";
 import { UserButton, useUser, useAuth, SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { fetchFromBackend } from "@/lib/api";
+import { fetchFromBackend, BACKEND_URL } from "@/lib/api";
 
 export default function DashboardPage() {
   return (
@@ -153,7 +153,14 @@ function DashboardPageContent() {
     } else if (rawMessage.includes("Content is required")) {
       friendlyMessage = "Don't forget to add some content first!";
     } else if (rawMessage.includes("Failed to fetch") || rawMessage.includes("NetworkError")) {
-      friendlyMessage = "Connection unstable. Live Engine is trying to reconnect...";
+      const isLocalhost = BACKEND_URL.includes("localhost");
+      const isProd = window.location.hostname !== "localhost";
+
+      if (isProd && isLocalhost) {
+        friendlyMessage = "Configuration Error: The live site is trying to connect to a local backend. Please set NEXT_PUBLIC_BACKEND_URL in Vercel.";
+      } else {
+        friendlyMessage = "Connection unstable. Live Engine is trying to reconnect...";
+      }
     } else if (rawMessage.includes("Unexpected token") || rawMessage.includes("parsing")) {
       friendlyMessage = "Engine hiccup. Trying to recover...";
     }
