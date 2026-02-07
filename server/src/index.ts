@@ -12,7 +12,7 @@ import subscriptionRoutes from "./routes/subscription.js";
 import generateRoutes from "./routes/generate.js";
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = Number(process.env.PORT) || 3001;
 
 export const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -49,6 +49,8 @@ app.use("/razorpay", razorpayRoutes);
 app.use("/subscription", subscriptionRoutes);
 app.use("/generate", generateRoutes);
 
-app.listen(port as number, "0.0.0.0", () => {
-    console.log(`Backend server running on 0.0.0.0:${port}`);
+app.listen(port, "0.0.0.0", () => {
+    console.log(`🚀 TextFroge Backend is ready!`);
+    console.log(`📡 Listening on: 0.0.0.0:${port}`);
+    console.log(`✅ Health check available at: /`);
 });
