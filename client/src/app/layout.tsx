@@ -94,9 +94,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    // Replace with your actual verification code from Google Search Console
-    // The code looks like: google-site-verification: 2499e29206e0468f
-    google: '2499e29206e0468f',
+    google: 'FZ_Em2qxl9ZAjf_JBL6kKJfqAaz6NWiYFMvxbFe8mEE',
     // yandex: 'your-yandex-verification-code',
     // bing: 'your-bing-verification-code',
   },
