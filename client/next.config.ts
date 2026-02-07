@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
       ],
     },
   },
+  // SEO optimizations
+  trailingSlash: false, // Consistent URL structure
+  compress: true, // Enable gzip compression for faster load times
+  poweredByHeader: false, // Remove X-Powered-By header for security
 };
 
 export default nextConfig;

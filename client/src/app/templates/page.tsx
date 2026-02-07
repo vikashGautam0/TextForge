@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { UserButton } from "@clerk/nextjs";
 
+
 const TEMPLATES = [
     {
         id: "simple",

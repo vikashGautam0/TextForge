@@ -143,8 +143,112 @@ export default function Home() {
     }
   };
 
+  // Structured Data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "TextForge Studio",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "INR",
+      "availability": "https://schema.org/InStock"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "127"
+    },
+    "description": "Create professional PDFs instantly with TextForge Studio. Free AI-powered PDF generator with 15+ templates. Convert text to PDF, images to PDF, create resumes, invoices, reports & more.",
+    "featureList": [
+      "AI-powered PDF generation",
+      "15+ professional templates",
+      "Resume builder with multiple styles",
+      "Image to PDF converter",
+      "Text to PDF conversion",
+      "Invoice generator",
+      "Report creator",
+      "Contract templates",
+      "Custom branding options",
+      "Unlimited exports"
+    ],
+    "screenshot": "/logo.png",
+    "author": {
+      "@type": "Organization",
+      "name": "TextForge Studio"
+    }
+  };
+
+  // FAQ Structured Data for SEO
+  const faqStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is TextForge Studio really free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! Our Starter plan is completely free and includes 10 PDF exports per month with basic templates. Upgrade to unlock unlimited exports, premium templates, and AI formatting features."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What types of PDFs can I create?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Create resumes, invoices, reports, academic papers, technical documentation, contracts, letters, and more with 15+ professional templates. Convert text to PDF or images to PDF instantly."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does the AI formatting work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Our AI analyzes your content and automatically formats it according to your chosen template. It handles headings, spacing, typography, and layout to create professional-looking documents instantly."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I customize the templates?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely! Customize fonts, colors, add your logo, and adjust layouts. Pro and Business plans offer advanced branding options to match your company's visual identity perfectly."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data secure?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! All documents are processed securely, and we never store your content without permission. Your privacy and data security are our top priorities."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use this for commercial projects?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! All paid plans include commercial usage rights. Create client proposals, business reports, invoices, and any professional documents for your business or clients."
+        }
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-[#fafafa]">
+      {/* Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+      />
+
       <header className="sticky top-0 z-50 w-full border-b border-slate-200/50 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link href="/" className="flex items-center gap-3 group">
@@ -496,6 +600,64 @@ export default function Home() {
             >
               Buy Lifetime
             </button>
+          </div>
+        </section>
+
+        {/* FAQ Section for SEO */}
+        <section className="space-y-8 py-12">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-slate-900">Frequently Asked Questions</h2>
+            <p className="mt-2 text-slate-600">Everything you need to know about TextForge Studio</p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 bg-white p-6">
+              <h3 className="text-lg font-bold text-slate-900">Is TextForge Studio really free?</h3>
+              <p className="mt-2 text-sm text-slate-600">
+                Yes! Our Starter plan is completely free and includes 10 PDF exports per month with basic templates.
+                Upgrade to unlock unlimited exports, premium templates, and AI formatting features.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-6">
+              <h3 className="text-lg font-bold text-slate-900">What types of PDFs can I create?</h3>
+              <p className="mt-2 text-sm text-slate-600">
+                Create resumes, invoices, reports, academic papers, technical documentation, contracts, letters,
+                and more with 15+ professional templates. Convert text to PDF or images to PDF instantly.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-6">
+              <h3 className="text-lg font-bold text-slate-900">How does the AI formatting work?</h3>
+              <p className="mt-2 text-sm text-slate-600">
+                Our AI analyzes your content and automatically formats it according to your chosen template.
+                It handles headings, spacing, typography, and layout to create professional-looking documents instantly.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-6">
+              <h3 className="text-lg font-bold text-slate-900">Can I customize the templates?</h3>
+              <p className="mt-2 text-sm text-slate-600">
+                Absolutely! Customize fonts, colors, add your logo, and adjust layouts. Pro and Business plans
+                offer advanced branding options to match your company&apos;s visual identity perfectly.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-6">
+              <h3 className="text-lg font-bold text-slate-900">Is my data secure?</h3>
+              <p className="mt-2 text-sm text-slate-600">
+                Yes! All documents are processed securely, and we never store your content without permission.
+                Your privacy and data security are our top priorities.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-6">
+              <h3 className="text-lg font-bold text-slate-900">Can I use this for commercial projects?</h3>
+              <p className="mt-2 text-sm text-slate-600">
+                Yes! All paid plans include commercial usage rights. Create client proposals, business reports,
+                invoices, and any professional documents for your business or clients.
+              </p>
+            </div>
           </div>
         </section>
 

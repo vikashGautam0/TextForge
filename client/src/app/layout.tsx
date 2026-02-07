@@ -14,9 +14,91 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TextFroge — AI PDF Generation for Teams",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://textforge.com'),
+  title: {
+    default: "TextForge Studio - Free AI PDF Generator | Resume, Image to PDF, Text to PDF",
+    template: "%s | TextForge Studio"
+  },
   description:
-    "Generate brand-ready PDFs from prompts, templates, and data in minutes.",
+    "Create professional PDFs instantly with TextForge Studio. Free AI-powered PDF generator with 15+ templates. Convert text to PDF, images to PDF, create resumes, invoices, reports & more. Fast, free, and feature-rich PDF creation tool.",
+  keywords: [
+    "PDF generator",
+    "free PDF creator",
+    "AI PDF generator",
+    "text to PDF",
+    "image to PDF converter",
+    "resume generator",
+    "resume builder",
+    "PDF templates",
+    "invoice generator",
+    "report generator",
+    "online PDF maker",
+    "document creator",
+    "PDF editor",
+    "professional PDF",
+    "business PDF",
+    "academic PDF",
+    "technical documentation",
+    "contract generator",
+    "letter template",
+    "free resume templates",
+    "modern resume builder",
+    "executive resume",
+    "PDF converter online",
+    "fast PDF generation",
+    "branded PDF",
+    "custom PDF",
+    "TextForge",
+    "TextFroge Studio"
+  ],
+  authors: [{ name: "TextForge Studio Team" }],
+  creator: "TextForge Studio",
+  publisher: "TextForge Studio",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: '/',
+    siteName: 'TextForge Studio',
+    title: 'TextForge Studio - Free AI PDF Generator with 15+ Templates',
+    description: 'Create professional PDFs instantly. Free AI-powered generator for resumes, invoices, reports & more. Convert text to PDF, images to PDF. Fast, free, feature-rich.',
+    images: [
+      {
+        url: '/logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'TextForge Studio - AI PDF Generator',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'TextForge Studio - Free AI PDF Generator',
+    description: 'Create professional PDFs instantly with AI. 15+ templates for resumes, invoices, reports. Convert text & images to PDF. Free & fast.',
+    images: ['/logo.png'],
+    creator: '@textforge',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    // Add your verification codes here when available
+    google: 'google2499e29206e0468f.html',
+    // yandex: 'your-yandex-verification-code',
+    // bing: 'your-bing-verification-code',
+  },
 };
 
 export default function RootLayout({

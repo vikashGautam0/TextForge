@@ -10,6 +10,7 @@ import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { fetchFromBackend, BACKEND_URL } from "@/lib/api";
 
+
 export default function DashboardPage() {
   return (
     <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading Studio...</div>}>
