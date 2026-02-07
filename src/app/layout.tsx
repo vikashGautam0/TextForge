@@ -18,8 +18,8 @@ export const metadata: Metadata = {
   description:
     "Generate brand-ready PDFs from prompts, templates, and data in minutes.",
   icons: {
-    icon: "/favicon.png",
-    apple: "/favicon.png",
+    icon: "/logo.png",
+    apple: "/logo.png",
   },
 };
 
