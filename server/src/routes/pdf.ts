@@ -588,7 +588,11 @@ router.post("/", ClerkExpressWithAuth() as any, async (req: any, res) => {
         res.send(Buffer.from(pdfBytes));
 
     } catch (error: any) {
-        console.error("PDF generation error:", error);
+        console.error("CRITICAL PDF ERROR:", {
+            message: error.message,
+            stack: error.stack,
+            userId: req.auth?.userId
+        });
         res.status(500).json({ error: error.message || "Failed to generate PDF" });
     }
 });
