@@ -49,6 +49,6 @@ app.use("/razorpay", razorpayRoutes);
 app.use("/subscription", subscriptionRoutes);
 app.use("/generate", generateRoutes);
 
-app.listen(port, () => {
-    console.log(`Backend server running on port ${port}`);
+app.listen(port as number, "0.0.0.0", () => {
+    console.log(`Backend server running on 0.0.0.0:${port}`);
 });
