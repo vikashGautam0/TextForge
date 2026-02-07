@@ -1,5 +1,5 @@
 import express from "express";
-import { ClerkExpressWithAuth } from "@clerk/clerk-sdk-node";
+import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 import { supabase, mistral } from "../index.js";
 
 const router = express.Router();
@@ -15,32 +15,25 @@ type ContentChunk = {
     text?: string;
 };
 
-router.post("/format", ClerkExpressWithAuth() as any, async (req: any, res) => {
+router.post("/format", ClerkExpressRequireAuth() as any, async (req: any, res) => {
     try {
-        const userId = req.auth?.userId;
+        const userId = req.auth.userId;
 
-        let plan = "starter";
-        let aiUsage = 0;
-        let sub: any = null;
+        // Check AI usage for logged-in users
+        const { data: sub } = await supabase
+            .from("subscriptions")
+            .select("*")
+            .eq("user_id", userId)
+            .single() as { data: any };
 
-        if (userId) {
-            // Check AI usage for logged-in users
-            const { data } = await supabase
-                .from("subscriptions")
-                .select("*")
-                .eq("user_id", userId)
-                .single();
+        const plan = sub?.plan_type || "starter";
+        const aiUsage = sub?.ai_usage_count || 0;
 
-            sub = data;
-            plan = sub?.plan_type || "starter";
-            aiUsage = sub?.ai_usage_count || 0;
-
-            // Allow 5 AI formats for free users
-            if ((plan === "starter" || plan === "free") && aiUsage >= 5) {
-                return res.status(403).json({
-                    error: "Monthly AI formatting limit reached (5/5). Upgrade to unlock unlimited AI Magic!"
-                });
-            }
+        // Allow 5 AI formats for free users
+        if ((plan === "starter" || plan === "free") && aiUsage >= 5) {
+            return res.status(403).json({
+                error: "Monthly AI formatting limit reached (5/5). Upgrade to unlock unlimited AI Magic!"
+            });
         }
 
         const body = req.body as FormatPayload;
@@ -116,12 +109,10 @@ ${plan === "pro" || plan === "business" ? "- Add advanced structure (bullets, ta
             );
         }
 
-        // Increment AI usage count for logged-in users
-        if (userId) {
-            await supabase
-                .from("subscriptions")
-                .upsert({ user_id: userId, ai_usage_count: (sub?.ai_usage_count || 0) + 1 }, { onConflict: "user_id" });
-        }
+        // Increment AI usage count
+        await supabase
+            .from("subscriptions")
+            .upsert({ user_id: userId, ai_usage_count: (sub?.ai_usage_count || 0) + 1 }, { onConflict: "user_id" });
 
         res.json({
             success: true,

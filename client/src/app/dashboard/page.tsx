@@ -166,6 +166,12 @@ function DashboardPageContent() {
 
   // AI Format Handler
   const handleAIFormat = async (task: "format" | "summarize" | "expand" | "refine" = "format") => {
+    if (!user) {
+      setError("Sign in to use AI Magic! ✨");
+      setTimeout(() => setError(""), 3000);
+      return;
+    }
+
     if (!content.trim()) {
       setError("Add some text first so the AI can work its magic!");
       setTimeout(() => setError(""), 3000);
@@ -430,10 +436,10 @@ function DashboardPageContent() {
                   const aiCount = subscription?.ai_usage_count || 0;
                   if (plan === "starter" || plan === "free") return `${Math.max(0, 5 - aiCount)} / 5 Left`;
                   return "∞ Unlimited";
-                })() : "Full Access"}
+                })() : "Members Only"}
               </span>
               <span className="text-slate-400 uppercase text-[9px] font-bold tracking-tighter">
-                {user ? `Plan: ${subscription?.plan_type || 'Starter'}` : "Demo Access"}
+                {user ? `Plan: ${subscription?.plan_type || 'Starter'}` : "Guest Mode"}
               </span>
             </div>
             <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
