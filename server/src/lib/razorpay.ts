@@ -1,14 +1,18 @@
 import Razorpay from "razorpay";
-import dotenv from "dotenv";
+const razorpayKeyId = process.env.RAZORPAY_KEY_ID;
+const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET;
 
-dotenv.config();
-
-const razorpayKeyId = process.env.RAZORPAY_KEY_ID || "";
-const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET || "";
+if (!razorpayKeyId || !razorpayKeySecret) {
+    if (process.env.NODE_ENV === 'production') {
+        console.error("FATAL ERROR: RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET is missing in environment variables.");
+    } else {
+        console.warn("⚠️ Razorpay credentials missing. Checkout will fail.");
+    }
+}
 
 export const razorpay = new Razorpay({
-    key_id: razorpayKeyId,
-    key_secret: razorpayKeySecret,
+    key_id: razorpayKeyId || "rzp_test_placeholder",
+    key_secret: razorpayKeySecret || "placeholder_secret",
 });
 
 export const RAZOR_PLANS = {

@@ -1,6 +1,6 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import morgan from "morgan";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 import { createClient } from "@supabase/supabase-js";
@@ -10,8 +10,6 @@ import aiRoutes from "./routes/ai.js";
 import razorpayRoutes from "./routes/razorpay.js";
 import subscriptionRoutes from "./routes/subscription.js";
 import generateRoutes from "./routes/generate.js";
-
-dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;
