@@ -17,14 +17,6 @@ export const metadata: Metadata = {
   title: "TextForge — AI PDF Generation for Teams",
   description:
     "Generate brand-ready PDFs from prompts, templates, and data in minutes.",
-  icons: {
-    icon: [
-      { url: "/favicon.png", type: "image/png" },
-    ],
-    apple: [
-      { url: "/apple-touch-icon.png", type: "image/png" },
-    ],
-  },
 };
 
 export default function RootLayout({
