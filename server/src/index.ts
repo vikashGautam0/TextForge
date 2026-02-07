@@ -33,6 +33,10 @@ app.use(express.json({ limit: "50mb" })); // Increased limit for base64 images
 app.use(morgan("dev"));
 
 // Health Check
+app.get("/", (req, res) => {
+    res.json({ message: "TextFroge Backend is Online 🐸", status: "ok" });
+});
+
 app.get("/health", (req, res) => {
     res.json({ status: "ok" });
 });
