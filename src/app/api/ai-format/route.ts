@@ -39,10 +39,12 @@ export async function POST(req: Request) {
             .single();
 
         const plan = sub?.plan_type || "starter";
+        const aiUsage = sub?.ai_usage_count || 0;
 
-        if (plan === "starter" || plan === "free") {
+        // Allow 5 AI formats for free users
+        if ((plan === "starter" || plan === "free") && aiUsage >= 5) {
             return NextResponse.json({
-                error: "AI formatting is not available on the Starter plan. Upgrade to Creator to unlock AI features."
+                error: "Monthly AI formatting limit reached (5/5). Upgrade to unlock unlimited AI Magic!"
             }, { status: 403 });
         }
 

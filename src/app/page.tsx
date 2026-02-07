@@ -196,13 +196,13 @@ export default function Home() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 md:hidden"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 shadow-lg md:hidden"
             >
-              <svg className="h-4 w-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isMobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                 ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
                 )}
               </svg>
             </button>
@@ -211,28 +211,38 @@ export default function Home() {
 
         {/* Mobile Menu Overlay */}
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 top-[65px] z-40 bg-white p-6 animate-in slide-in-from-top-4 duration-200 md:hidden">
-            <nav className="flex flex-col gap-6 text-lg font-bold text-slate-900">
-              <a href="#features" onClick={() => setIsMobileMenuOpen(false)}>Features</a>
-              <a href="#templates" onClick={() => setIsMobileMenuOpen(false)}>Templates</a>
-              <a href="#pricing" onClick={() => setIsMobileMenuOpen(false)}>Pricing</a>
+          <div className="fixed inset-0 top-[72px] z-[60] bg-white border-t border-slate-100 p-6 animate-in slide-in-from-top-4 duration-300 md:hidden shadow-2xl h-[calc(100vh-72px)] overflow-y-auto">
+            <nav className="flex flex-col gap-8 text-xl font-black text-slate-900">
+              <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between">
+                Features <span>→</span>
+              </a>
+              <a href="#templates" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between">
+                Templates <span>→</span>
+              </a>
+              <a href="#pricing" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between">
+                Pricing <span>→</span>
+              </a>
               <hr className="border-slate-100" />
-              <SignedOut>
-                <SignInButton mode="modal">
-                  <button className="text-left">Sign In</button>
-                </SignInButton>
-                <Link href="/sign-up" className="rounded-2xl bg-slate-900 py-4 text-center text-white">
-                  Get Started Free
-                </Link>
-              </SignedOut>
-              <SignedIn>
-                <Link href="/dashboard" className="rounded-2xl bg-slate-900 py-4 text-center text-white">
-                  Go to Dashboard
-                </Link>
-                <div className="flex items-center gap-3 py-2">
-                  <UserButton afterSignOutUrl="/" showName />
-                </div>
-              </SignedIn>
+              <div className="flex flex-col gap-4 mt-auto">
+                <SignedOut>
+                  <SignInButton mode="modal">
+                    <button className="rounded-2xl border border-slate-200 py-4 text-center font-bold text-slate-600">
+                      Sign In
+                    </button>
+                  </SignInButton>
+                  <Link href="/sign-up" className="rounded-2xl bg-indigo-600 py-4 text-center font-bold text-white shadow-lg shadow-indigo-100">
+                    Get Started Free
+                  </Link>
+                </SignedOut>
+                <SignedIn>
+                  <Link href="/dashboard" className="rounded-2xl bg-slate-900 py-4 text-center font-bold text-white">
+                    Dashboard
+                  </Link>
+                  <div className="flex items-center justify-center gap-3 py-2 bg-slate-50 rounded-xl p-4">
+                    <UserButton afterSignOutUrl="/" showName />
+                  </div>
+                </SignedIn>
+              </div>
             </nav>
           </div>
         )}

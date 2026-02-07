@@ -33,6 +33,7 @@ function DashboardPageContent() {
     plan_type: 'free' | 'starter' | 'creator' | 'pro' | 'business' | 'lifetime';
     status: string;
     pdf_usage_count: number;
+    ai_usage_count: number;
   }
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [exportCount, setExportCount] = useState(0);
@@ -415,31 +416,39 @@ function DashboardPageContent() {
             </div>
           </div>
 
-          {/* Stats / Guest Mode */}
+          {/* Stats / AI Magic Credits */}
           <div className="mt-auto space-y-4 rounded-3xl bg-slate-50 p-5 shadow-inner">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-              {user ? "Exports Left" : "Guest Engine"}
+              {user ? "AI Format Credits" : "Guest Mode"}
             </p>
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-slate-900">
                 {user ? (() => {
                   const plan = subscription?.plan_type || "starter";
-                  if (plan === "starter" || plan === "free") return Math.max(0, 10 - exportCount);
-                  return "∞";
+                  const aiCount = subscription?.ai_usage_count || 0;
+                  if (plan === "starter" || plan === "free") return `${Math.max(0, 5 - aiCount)} / 5 Left`;
+                  return "∞ Unlimited";
                 })() : "Full Access"}
               </span>
               <span className="text-slate-400 uppercase text-[9px] font-bold tracking-tighter">
-                {user ? `Plan: ${subscription?.plan_type || 'Starter'}` : "Not Signed In"}
+                {user ? `Plan: ${subscription?.plan_type || 'Starter'}` : "Demo Access"}
               </span>
             </div>
             <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
-              <div className={`h-full transition-all duration-500 ${user ? 'bg-slate-900' : 'bg-indigo-500 animate-pulse'}`}
-                style={{ width: user ? `${Math.min(100, (exportCount / 10) * 100)}%` : '100%' }}
+              <div className={`h-full transition-all duration-500 ${user ? 'bg-indigo-600' : 'bg-indigo-500 animate-pulse'}`}
+                style={{
+                  width: user ? (() => {
+                    const plan = subscription?.plan_type || "starter";
+                    const aiCount = subscription?.ai_usage_count || 0;
+                    if (plan === "starter" || plan === "free") return `${(aiCount / 5) * 100}%`;
+                    return '100%';
+                  })() : '100%'
+                }}
               />
             </div>
-            {!user && (
-              <p className="text-[9px] text-slate-400 italic mt-2">Sign in to save history & use custom fonts.</p>
-            )}
+            <p className="text-[9px] text-slate-400 italic mt-2">
+              {user ? "PDF Exports are now Unlimited for all users! 🚀" : "Sign in to save history & use custom fonts."}
+            </p>
           </div>
 
           {/* Conditional Ad for Free/Starter Users */}
@@ -449,7 +458,7 @@ function DashboardPageContent() {
                 <span className="rounded-full bg-white/20 px-2 py-0.5 text-[8px] font-bold text-white uppercase italic">Sponsor</span>
                 <span className="text-[8px] text-indigo-100 font-medium">TextForge Pro</span>
               </div>
-              <p className="mt-2 text-[11px] font-bold text-white leading-tight">Unlock AI History & HD Exports</p>
+              <p className="mt-2 text-[11px] font-bold text-white leading-tight">Unlock Unlimited AI Format & Premium Exports</p>
               <Link href="/#pricing" className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-white py-2 text-[10px] font-black text-indigo-600 shadow-xl transition active:scale-95">
                 Go Premium 🚀
               </Link>
@@ -571,8 +580,8 @@ function DashboardPageContent() {
                 disabled={isFormatting}
                 className="ml-4 flex items-center gap-2 rounded-full bg-slate-900 px-3 sm:px-4 py-1.5 text-[9px] sm:text-[10px] font-bold text-white transition hover:scale-105 active:scale-95 shrink-0"
               >
-                <span className="animate-pulse">✨</span>
-                AI Magic
+                <span className={isFormatting ? "animate-spin" : "animate-pulse"}>{isFormatting ? "⌛" : "✨"}</span>
+                {isFormatting ? "AI Working..." : "AI Format"}
               </button>
             </div>
 
@@ -674,8 +683,8 @@ function DashboardPageContent() {
                         <div className="flex items-center gap-3">
                           <span className="text-sm">⭐</span>
                           <div className="flex flex-col">
-                            <p className="text-[10px] font-bold text-white leading-none">Pro Tip: Remove Watermarks</p>
-                            <p className="text-[8px] text-indigo-100 mt-1">Upgrade to the Business plan for clean documents.</p>
+                            <p className="text-[10px] font-bold text-white leading-none">Pro Tip: Unlock AI Formatting</p>
+                            <p className="text-[8px] text-indigo-100 mt-1">Upgrade to the Business plan for unlimited AI magic.</p>
                           </div>
                         </div>
                         <Link href="/#pricing" className="rounded-lg bg-white/20 px-3 py-1 text-[9px] font-bold text-white backdrop-blur-sm transition hover:bg-white/30">

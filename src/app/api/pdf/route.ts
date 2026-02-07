@@ -46,12 +46,7 @@ export async function POST(request: Request) {
             }
         }
 
-        // Limit Checks
-        if ((plan === "starter" || plan === "free") && usageCount >= 10) {
-            return NextResponse.json({
-                error: "Monthly limit reached (10/10 PDFs). Upgrade to Creator for unlimited exports."
-            }, { status: 403 });
-        }
+        // Limit Checks - REMOVED for PDFs as per user request
 
         const body = (await request.json()) as PDFGeneratePayload;
         const {
@@ -121,9 +116,9 @@ export async function POST(request: Request) {
         const fontBold = await pdfDoc.embedFont(selectedFontBold);
         const fontMono = await pdfDoc.embedFont(StandardFonts.Courier);
 
-        // Constants for layout
-        const PAGE_WIDTH = 612; // Letter size
-        const PAGE_HEIGHT = 792;
+        // Constants for layout (A4 Size)
+        const PAGE_WIDTH = 595.28;
+        const PAGE_HEIGHT = 841.89;
         const MARGIN = 50;
         const CONTENT_WIDTH = PAGE_WIDTH - (MARGIN * 2);
 
@@ -271,15 +266,7 @@ export async function POST(request: Request) {
                     });
                 }
 
-                page.drawText(`${template.toUpperCase()}`, {
-                    x: MARGIN,
-                    y: PAGE_HEIGHT - 85,
-                    size: 10,
-                    font: font,
-                    color: theme.headerText ? rgb(0.8, 0.8, 1) : theme.secondary,
-                });
-
-                return PAGE_HEIGHT - 130;
+                return PAGE_HEIGHT - 100;
             }
             return PAGE_HEIGHT - MARGIN;
         };
@@ -537,28 +524,61 @@ export async function POST(request: Request) {
 
         processContent(sanitizedContent);
 
-        // Add page numbers to all pages (except code template if preferred, but keeping for utility)
+        // Add minimalist footer & page numbers
         const pages = pdfDoc.getPages();
+        const logoUrl = "https://textforge-studio.vercel.app"; // Fallback if no specific link
+
         pages.forEach((page, idx) => {
-            // Add watermark for free users
-            // Add watermark for free users
-            if (plan === "starter" || plan === "free") {
-                page.drawText("TextForge Starter", {
-                    x: 20,
-                    y: 20,
-                    size: 8,
-                    font: font,
-                    color: rgb(0.6, 0.6, 0.6),
-                    opacity: 0.6,
-                });
+            // Minimalist Black & White Logo/Text in bottom left
+            const footerY = 25;
+            const logoText = "TextForge Studio";
+            const textWidth = fontBold.widthOfTextAtSize(logoText, 9);
+
+            page.drawText(logoText, {
+                x: MARGIN,
+                y: footerY,
+                size: 9,
+                font: fontBold,
+                color: rgb(0, 0, 0),
+            });
+
+            // Add Clickable Link Annotation
+            page.drawRectangle({
+                x: MARGIN,
+                y: footerY - 2,
+                width: textWidth,
+                height: 12,
+                color: rgb(1, 1, 1),
+                opacity: 0,
+            });
+
+            // External link annotation (using standard PDF objects)
+            const link = pdfDoc.context.obj({
+                Type: 'Annot',
+                Subtype: 'Link',
+                Rect: [MARGIN, footerY - 2, MARGIN + textWidth, footerY + 10],
+                Border: [0, 0, 0],
+                A: {
+                    Type: 'Action',
+                    S: 'URI',
+                    URI: pdfDoc.context.obj(logoUrl),
+                },
+            });
+            const linkRef = pdfDoc.context.register(link);
+            const annots = page.node.get(pdfDoc.context.obj('Annots'));
+            if (annots) {
+                (annots as any).push(linkRef);
+            } else {
+                page.node.set(pdfDoc.context.obj('Annots'), pdfDoc.context.obj([linkRef]));
             }
 
+            // Page Number in Center
             page.drawText(`Page ${idx + 1} of ${pages.length}`, {
                 x: PAGE_WIDTH / 2 - 30,
-                y: 25,
-                size: 9,
+                y: footerY,
+                size: 8,
                 font: font,
-                color: template === "code" ? rgb(0.5, 0.4, 0.6) : theme.secondary,
+                color: rgb(0.5, 0.5, 0.5),
             });
         });
 
