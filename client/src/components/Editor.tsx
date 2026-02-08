@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, forwardRef } from "react";
 
 interface EditorProps {
     value: string;
@@ -10,12 +10,12 @@ interface EditorProps {
     onInsert?: (prefix: string, suffix: string) => void;
 }
 
-export default function Editor({
+const Editor = forwardRef<HTMLTextAreaElement, EditorProps>(({
     value,
     onChange,
     placeholder = "Start typing your content...",
     className = "",
-}: EditorProps) {
+}, ref) => {
     const [wordCount, setWordCount] = useState(0);
     const [charCount, setCharCount] = useState(0);
     const [isSaved, setIsSaved] = useState(true);
@@ -102,6 +102,7 @@ export default function Editor({
 
             {/* Text Editor */}
             <textarea
+                ref={ref}
                 value={value}
                 onChange={handleInput}
                 placeholder={placeholder}
@@ -128,4 +129,8 @@ export default function Editor({
             </div>
         </div>
     );
-}
+});
+
+Editor.displayName = "Editor";
+
+export default Editor;
