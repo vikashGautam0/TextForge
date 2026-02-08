@@ -661,7 +661,7 @@ function DashboardPageContent() {
                 {/* Editor View */}
                 {(view === 'editor' || view === 'split') && (
                   <div className={`flex flex-col overflow-hidden border-r border-slate-100 ${view === 'split' ? '' : 'mx-auto w-full max-w-4xl'}`}>
-                    <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-12">
+                    <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-6 pb-24 sm:px-6 sm:py-8 sm:pb-8 lg:px-12 touch-pan-y">
                       <RichTextEditor
                         ref={editorRef}
                         value={content}
@@ -670,7 +670,7 @@ function DashboardPageContent() {
                           if (formattedHTML) setFormattedHTML("");
                         }}
                         placeholder="Start writing your thoughts..."
-                        className="h-full"
+                        className="h-full min-h-[calc(100vh-280px)]"
                       />
                     </div>
                   </div>
@@ -747,61 +747,65 @@ function DashboardPageContent() {
           </div>
         </div>
 
-        {/* Mobile Bottom Navigation - Fixed for easy thumb access */}
-        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-slate-200 shadow-2xl shadow-slate-200/50 lg:hidden safe-bottom">
-          <div className="flex items-center justify-around px-2 py-2">
-            {/* Editor Tab */}
-            <button
-              onClick={() => setView('editor')}
-              className={`flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all ${view === 'editor' ? 'bg-slate-900 text-white scale-105' : 'text-slate-500'}`}
-            >
-              <span className="text-lg">✍️</span>
-              <span className="text-[9px] font-bold uppercase tracking-tighter">Edit</span>
-            </button>
+        {/* Mobile Bottom Navigation - Hidden when sidebar is open */}
+        {!isSidebarOpen && (
+          <nav className="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-xl border-t border-slate-200 shadow-2xl shadow-slate-200/50 lg:hidden safe-bottom transition-transform duration-300">
+            <div className="flex items-center justify-around px-2 py-1.5">
+              {/* Editor Tab */}
+              <button
+                onClick={() => setView('editor')}
+                className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all ${view === 'editor' ? 'bg-slate-900 text-white scale-105' : 'text-slate-500'}`}
+              >
+                <span className="text-base">✍️</span>
+                <span className="text-[8px] font-bold uppercase tracking-tighter">Edit</span>
+              </button>
 
-            {/* AI Magic - Center prominent button */}
-            <button
-              onClick={() => handleAIFormat('format')}
-              disabled={isFormatting}
-              className="relative -mt-6 flex flex-col items-center"
-            >
-              <div className={`h-14 w-14 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center shadow-xl shadow-violet-300 transition-all active:scale-95 ${isFormatting ? 'animate-pulse' : ''}`}>
-                <span className="text-2xl">{isFormatting ? '⌛' : '✨'}</span>
-              </div>
-              <span className="text-[9px] font-bold uppercase tracking-tighter text-violet-600 mt-1">AI Magic</span>
-            </button>
+              {/* AI Magic - Smaller, more subtle button */}
+              <button
+                onClick={() => handleAIFormat('format')}
+                disabled={isFormatting}
+                className="relative -mt-3 flex flex-col items-center"
+              >
+                <div className={`h-10 w-10 rounded-xl bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-300/50 transition-all active:scale-95 ${isFormatting ? 'animate-pulse' : ''}`}>
+                  <span className="text-lg">{isFormatting ? '⌛' : '✨'}</span>
+                </div>
+                <span className="text-[8px] font-bold uppercase tracking-tighter text-violet-600 mt-0.5">AI</span>
+              </button>
 
-            {/* Preview Tab */}
+              {/* Preview Tab */}
+              <button
+                onClick={() => setView('preview')}
+                className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all ${view === 'preview' ? 'bg-slate-900 text-white scale-105' : 'text-slate-500'}`}
+              >
+                <span className="text-base">👁️</span>
+                <span className="text-[8px] font-bold uppercase tracking-tighter">Preview</span>
+              </button>
+            </div>
+          </nav>
+        )}
+
+        {/* Mobile Floating Export Button - Hidden when sidebar is open */}
+        {!isSidebarOpen && (
+          <div className="fixed bottom-16 right-4 z-20 lg:hidden transition-opacity duration-300">
             <button
-              onClick={() => setView('preview')}
-              className={`flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all ${view === 'preview' ? 'bg-slate-900 text-white scale-105' : 'text-slate-500'}`}
+              onClick={handleGeneratePDF}
+              disabled={isGenerating}
+              className="group flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-xs font-bold text-white shadow-xl shadow-indigo-300/50 transition-all hover:bg-indigo-700 active:scale-95 disabled:opacity-50"
             >
-              <span className="text-lg">👁️</span>
-              <span className="text-[9px] font-bold uppercase tracking-tighter">Preview</span>
+              {isGenerating ? (
+                <>
+                  <span className="h-3 w-3 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  <span>Exporting...</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-sm">📄</span>
+                  <span>Export</span>
+                </>
+              )}
             </button>
           </div>
-        </nav>
-
-        {/* Mobile Floating Export Button - Always visible */}
-        <div className="fixed bottom-20 right-4 z-40 lg:hidden">
-          <button
-            onClick={handleGeneratePDF}
-            disabled={isGenerating}
-            className="group flex items-center gap-2 rounded-2xl bg-indigo-600 px-5 py-4 text-sm font-bold text-white shadow-2xl shadow-indigo-300 transition-all hover:bg-indigo-700 active:scale-95 disabled:opacity-50"
-          >
-            {isGenerating ? (
-              <>
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                <span>Exporting...</span>
-              </>
-            ) : (
-              <>
-                <span className="text-lg">📄</span>
-                <span>Export PDF</span>
-              </>
-            )}
-          </button>
-        </div>
+        )}
 
         {/* Extra padding for mobile bottom nav */}
         <div className="h-20 lg:hidden" />

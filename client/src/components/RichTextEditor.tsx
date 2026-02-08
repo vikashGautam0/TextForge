@@ -130,7 +130,7 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(
             return (
                 <div className="flex flex-col gap-4 animate-pulse">
                     <div className="h-12 bg-slate-100 rounded-2xl" />
-                    <div className="min-h-[400px] sm:min-h-[700px] bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-center">
+                    <div className="min-h-[350px] sm:min-h-[600px] bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-center">
                         <span className="text-slate-400 text-sm">Loading editor...</span>
                     </div>
                     <div className="h-12 bg-slate-100 rounded-2xl" />
@@ -183,8 +183,8 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(
                     </div>
                 </div>
 
-                <div className="relative min-h-[400px] sm:min-h-[700px] w-full rounded-2xl border border-slate-200 bg-white/80 transition focus-within:border-slate-400 focus-within:ring-2 focus-within:ring-slate-200 overflow-hidden">
-                    <EditorContent editor={editor} />
+                <div className="relative min-h-[350px] sm:min-h-[600px] w-full rounded-2xl border border-slate-200 bg-white/80 transition focus-within:border-slate-400 focus-within:ring-2 focus-within:ring-slate-200 overflow-auto overscroll-contain touch-pan-y">
+                    <EditorContent editor={editor} className="min-h-full" />
                 </div>
 
                 {/* Editor Footer */}
