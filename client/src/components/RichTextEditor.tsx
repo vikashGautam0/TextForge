@@ -34,6 +34,12 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(
         const [wordCount, setWordCount] = useState(0);
         const [charCount, setCharCount] = useState(0);
         const [isSaved, setIsSaved] = useState(true);
+        const [isMounted, setIsMounted] = useState(false);
+
+        // Ensure we only run on client
+        useEffect(() => {
+            setIsMounted(true);
+        }, []);
 
         const editor = useEditor({
             extensions: [
@@ -57,9 +63,9 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(
                     class: "prose prose-sm sm:prose-base focus:outline-none min-h-[400px] sm:min-h-[700px] w-full max-w-none px-4 sm:px-6 py-3 sm:py-4 text-slate-900",
                 },
             },
-            onUpdate: ({ editor }) => {
-                const markdown = (editor.storage as any).markdown.getMarkdown();
-                const text = editor.getText();
+            onUpdate: ({ editor: ed }) => {
+                const markdown = (ed.storage as any).markdown.getMarkdown();
+                const text = ed.getText();
 
                 // Update counts based on text content
                 const words = text.trim().split(/\s+/).filter(Boolean);
@@ -70,6 +76,8 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(
                 onChange(markdown);
                 setIsSaved(false);
             },
+            // Only create editor when mounted on client
+            immediatelyRender: false,
         });
 
         // Sync external value changes to editor content
@@ -118,8 +126,16 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(
             }
         }, [value, isSaved]);
 
-        if (!editor) {
-            return <div className="min-h-[400px] w-full rounded-2xl border border-slate-200 bg-white/80 p-6">Loading editor...</div>;
+        if (!editor || !isMounted) {
+            return (
+                <div className="flex flex-col gap-4 animate-pulse">
+                    <div className="h-12 bg-slate-100 rounded-2xl" />
+                    <div className="min-h-[400px] sm:min-h-[700px] bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-center">
+                        <span className="text-slate-400 text-sm">Loading editor...</span>
+                    </div>
+                    <div className="h-12 bg-slate-100 rounded-2xl" />
+                </div>
+            );
         }
 
         return (
