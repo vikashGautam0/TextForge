@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense, useCallback, useRef } from "react";
 import Link from "next/link";
-import Editor from "@/components/Editor";
+import RichTextEditor, { RichTextEditorRef } from "@/components/RichTextEditor";
 import { type TemplateType } from "@/components/TemplatePicker";
 import { supabase } from "@/lib/supabase";
 import { UserButton, useUser, useAuth, SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
@@ -45,7 +45,7 @@ function DashboardPageContent() {
   const [featureImage, setFeatureImage] = useState<string | null>(null);
   const [view, setView] = useState<'editor' | 'split' | 'preview'>('editor');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const editorRef = useRef<HTMLTextAreaElement>(null);
+  const editorRef = useRef<RichTextEditorRef | null>(null);
 
   const searchParams = useSearchParams();
 
@@ -239,33 +239,7 @@ function DashboardPageContent() {
     }
   };
 
-  const insertMarkdown = (prefix: string, suffix: string) => {
-    const textarea = editorRef.current;
-    if (!textarea) {
-      setContent(prev => prev + prefix + suffix);
-      return;
-    }
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selection = content.substring(start, end);
-    const replacement = prefix + selection + suffix;
-    const newContent = content.substring(0, start) + replacement + content.substring(end);
-
-    setContent(newContent);
-
-    // Focus and select the inserted text (or inside the tags if no selection)
-    setTimeout(() => {
-      textarea.focus();
-      if (selection.length === 0) {
-        // If nothing selected, cursor between tags
-        textarea.setSelectionRange(start + prefix.length, start + prefix.length);
-      } else {
-        // If text selected, select the whole block including tags
-        textarea.setSelectionRange(start, start + replacement.length);
-      }
-    }, 0);
-  };
+  // Removed insertMarkdown as it is handled by the RichTextEditor ref directly
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -598,13 +572,13 @@ function DashboardPageContent() {
                 <div className="mx-2 sm:mx-4 h-4 w-[1px] bg-slate-200" />
 
                 <div className="flex items-center gap-3 sm:gap-4 text-slate-400">
-                  <button type="button" onMouseDown={(e) => { e.preventDefault(); insertMarkdown('**', '**'); }} className="hover:text-slate-900 transition"><span className="font-bold">B</span></button>
-                  <button type="button" onMouseDown={(e) => { e.preventDefault(); insertMarkdown('_', '_'); }} className="hover:text-slate-900 transition"><span className="italic">I</span></button>
-                  <button type="button" onMouseDown={(e) => { e.preventDefault(); insertMarkdown('<u>', '</u>'); }} className="hover:text-slate-900 transition underline">U</button>
-                  <button type="button" onMouseDown={(e) => { e.preventDefault(); insertMarkdown('[', '](url)'); }} className="hidden sm:block hover:text-slate-900 transition">
+                  <button type="button" onClick={() => editorRef.current?.toggleBold()} className="hover:text-slate-900 transition"><span className="font-bold">B</span></button>
+                  <button type="button" onClick={() => editorRef.current?.toggleItalic()} className="hover:text-slate-900 transition"><span className="italic">I</span></button>
+                  <button type="button" onClick={() => editorRef.current?.toggleUnderline()} className="hover:text-slate-900 transition underline">U</button>
+                  <button type="button" onClick={() => editorRef.current?.setLink()} className="hidden sm:block hover:text-slate-900 transition">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.172 13.828a4 4 0 015.656 0l4-4a4 4 0 115.656 5.656l-1.101 1.101" /></svg>
                   </button>
-                  <button type="button" onMouseDown={(e) => { e.preventDefault(); insertMarkdown('\n- ', ''); }} className="hover:text-slate-900 transition">
+                  <button type="button" onClick={() => editorRef.current?.toggleBulletList()} className="hover:text-slate-900 transition">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
                   </button>
                 </div>
@@ -674,7 +648,7 @@ function DashboardPageContent() {
                 {(view === 'editor' || view === 'split') && (
                   <div className={`flex flex-col overflow-hidden border-r border-slate-100 ${view === 'split' ? '' : 'mx-auto w-full max-w-4xl'}`}>
                     <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-12">
-                      <Editor
+                      <RichTextEditor
                         ref={editorRef}
                         value={content}
                         onChange={(val) => {

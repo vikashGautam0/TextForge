@@ -500,21 +500,27 @@ router.post("/", ClerkExpressWithAuth() as any, async (req: any, res) => {
                     const trimmed = trimmedLine;
                     if (trimmed.startsWith('# ')) {
                         y -= 10;
-                        drawWrappedText(trimmed.substring(2), { size: 22, font: fontBold, color: theme.accent });
+                        drawWrappedText(trimmed.substring(2).replace(/(\*\*|__)(.*?)\1/g, '$2').replace(/(\*|_)(.*?)\1/g, '$2').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'), { size: 22, font: fontBold, color: theme.accent });
                         y -= 15;
                     } else if (trimmed.startsWith('## ')) {
                         y -= 8;
-                        drawWrappedText(trimmed.substring(3), { size: 18, font: fontBold, color: theme.primary });
+                        drawWrappedText(trimmed.substring(3).replace(/(\*\*|__)(.*?)\1/g, '$2').replace(/(\*|_)(.*?)\1/g, '$2').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'), { size: 18, font: fontBold, color: theme.primary });
                         y -= 12;
                     } else if (trimmed.startsWith('### ')) {
-                        drawWrappedText(trimmed.substring(4), { size: 14, font: fontBold, color: theme.secondary });
+                        drawWrappedText(trimmed.substring(4).replace(/(\*\*|__)(.*?)\1/g, '$2').replace(/(\*|_)(.*?)\1/g, '$2').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'), { size: 14, font: fontBold, color: theme.secondary });
                         y -= 8;
                     } else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-                        drawWrappedText('• ' + trimmed.substring(2), { size: 11, font: font, color: theme.primary, indent: 15 });
+                        drawWrappedText('• ' + trimmed.substring(2).replace(/(\*\*|__)(.*?)\1/g, '$2').replace(/(\*|_)(.*?)\1/g, '$2').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'), { size: 11, font: font, color: theme.primary, indent: 15 });
                     } else if (/^\d+\.\s/.test(trimmed)) {
-                        drawWrappedText(trimmed, { size: 11, font: font, color: theme.primary, indent: 15 });
+                        drawWrappedText(trimmed.replace(/(\*\*|__)(.*?)\1/g, '$2').replace(/(\*|_)(.*?)\1/g, '$2').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'), { size: 11, font: font, color: theme.primary, indent: 15 });
                     } else {
-                        const cleanText = trimmed.replace(/<[^>]*>/g, '');
+                        // Strip HTML tags AND Markdown
+                        const cleanText = trimmed
+                            .replace(/<[^>]*>/g, '')
+                            .replace(/(\*\*|__)(.*?)\1/g, '$2') // Bold
+                            .replace(/(\*|_)(.*?)\1/g, '$2')   // Italic (simple)
+                            .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'); // Links
+
                         if (cleanText) {
                             drawWrappedText(cleanText, { size: 11, font: font, color: theme.primary });
                             y -= 6;
