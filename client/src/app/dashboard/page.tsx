@@ -207,7 +207,8 @@ function DashboardPageContent() {
       }
 
       const data = await response.json();
-      setFormattedHTML(data.formattedHTML);
+      setContent(data.formattedHTML);
+      setFormattedHTML(""); // Clear preview override since content is now updated
     } catch (err: unknown) {
       handleUserError(err, "AI Magic is resting. Try again in a moment.");
     } finally {
