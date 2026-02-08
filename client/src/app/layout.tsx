@@ -14,7 +14,7 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://textforge.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://textfroge.site'),
   title: {
     default: "TextForge Studio - Free AI PDF Generator | Resume, Image to PDF, Text to PDF",
     template: "%s | TextForge Studio"
@@ -30,6 +30,7 @@ export const metadata: Metadata = {
     "resume generator",
     "resume builder",
     "PDF templates",
+    "professional PDF templates",
     "invoice generator",
     "report generator",
     "online PDF maker",
@@ -37,13 +38,14 @@ export const metadata: Metadata = {
     "PDF editor",
     "professional PDF",
     "business PDF",
+    "business document templates",
     "academic PDF",
     "technical documentation",
     "contract generator",
     "letter template",
     "free resume templates",
     "modern resume builder",
-    "executive resume",
+    "executive resume template",
     "PDF converter online",
     "fast PDF generation",
     "branded PDF",
