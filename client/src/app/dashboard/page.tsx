@@ -598,13 +598,13 @@ function DashboardPageContent() {
                 <div className="mx-2 sm:mx-4 h-4 w-[1px] bg-slate-200" />
 
                 <div className="flex items-center gap-3 sm:gap-4 text-slate-400">
-                  <button type="button" onClick={() => insertMarkdown('**', '**')} className="hover:text-slate-900 transition"><span className="font-bold">B</span></button>
-                  <button type="button" onClick={() => insertMarkdown('_', '_')} className="hover:text-slate-900 transition"><span className="italic">I</span></button>
-                  <button type="button" onClick={() => insertMarkdown('<u>', '</u>')} className="hover:text-slate-900 transition underline">U</button>
-                  <button type="button" onClick={() => insertMarkdown('[', '](url)')} className="hidden sm:block hover:text-slate-900 transition">
+                  <button type="button" onMouseDown={(e) => { e.preventDefault(); insertMarkdown('**', '**'); }} className="hover:text-slate-900 transition"><span className="font-bold">B</span></button>
+                  <button type="button" onMouseDown={(e) => { e.preventDefault(); insertMarkdown('_', '_'); }} className="hover:text-slate-900 transition"><span className="italic">I</span></button>
+                  <button type="button" onMouseDown={(e) => { e.preventDefault(); insertMarkdown('<u>', '</u>'); }} className="hover:text-slate-900 transition underline">U</button>
+                  <button type="button" onMouseDown={(e) => { e.preventDefault(); insertMarkdown('[', '](url)'); }} className="hidden sm:block hover:text-slate-900 transition">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.172 13.828a4 4 0 015.656 0l4-4a4 4 0 115.656 5.656l-1.101 1.101" /></svg>
                   </button>
-                  <button type="button" onClick={() => insertMarkdown('\n- ', '')} className="hover:text-slate-900 transition">
+                  <button type="button" onMouseDown={(e) => { e.preventDefault(); insertMarkdown('\n- ', ''); }} className="hover:text-slate-900 transition">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
                   </button>
                 </div>
