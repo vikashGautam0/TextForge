@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export type TemplateType = "simple" | "academic" | "professional" | "code" | "modern" | "minimal" | "invoice" | "resume" | "resume_modern" | "resume_executive" | "creative" | "letter" | "report" | "contract";
+export type TemplateType = "simple" | "academic" | "professional" | "code" | "modern" | "minimal" | "invoice" | "resume" | "resume_modern" | "resume_executive" | "creative" | "letter" | "report" | "contract" | "proposal";
 
 interface Template {
   id: TemplateType;
@@ -298,6 +298,31 @@ const templates: Template[] = [
           <div style="border-top: 1px solid #000; width: 200px; text-align: center;">Signature</div>
           <div style="border-top: 1px solid #000; width: 200px; text-align: center;">Date</div>
         </div>
+      </div>
+    `,
+  },
+  {
+    id: "proposal",
+    name: "Business Proposal",
+    description: "Compelling layout for client proposals and pitches",
+    preview: "Executive summary, scope, and pricing sections",
+    icon: "📋",
+    cssStyles: `
+      body { font-family: 'Inter', sans-serif; color: #1e293b; }
+      h1 { font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem; }
+      h2 { font-size: 1.25rem; font-weight: 700; color: #4f46e5; margin-top: 2.5rem; 
+           padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; }
+      p { font-size: 1rem; line-height: 1.7; color: #475569; }
+      .highlight { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); 
+                   color: white; padding: 1.5rem; border-radius: 1rem; margin: 1.5rem 0; }
+    `,
+    htmlSnippet: `
+      <div style="padding: 3rem; max-width: 850px; margin: 0 auto;">
+        <div class="highlight">
+          <h1 style="color: white; margin: 0;">{{title}}</h1>
+          <p style="color: rgba(255,255,255,0.8); margin: 0.5rem 0 0;">{{subtitle}}</p>
+        </div>
+        <div>{{content}}</div>
       </div>
     `,
   },
