@@ -10,47 +10,92 @@ import { fetchFromBackend } from "@/lib/api";
 const templateShowcase = [
   {
     id: "professional",
-    name: "Professional",
-    description: "Bold headers, clean typography, and serious business layouts.",
+    name: "Executive Report",
+    description: "Bold headers, clean typography, and corporate-ready layouts.",
     color: "bg-slate-900",
     textColor: "text-white",
-    dots: ["#ff5f57", "#ffbd2e", "#27c93f"],
+    previewTitle: "Q4 Summary",
+    previewContent: "Revenue +23%",
     elements: (
       <div className="space-y-3">
-        <div className="h-6 w-full rounded bg-slate-800" />
+        <div className="h-6 w-full rounded bg-white/20" />
         <div className="grid grid-cols-3 gap-2">
-          <div className="h-12 rounded bg-slate-800/50" />
-          <div className="h-12 rounded bg-slate-800/50" />
-          <div className="h-12 rounded bg-slate-800/50" />
+          <div className="h-12 rounded bg-white/10 flex items-center justify-center text-white/60 text-[8px]">Data</div>
+          <div className="h-12 rounded bg-white/10 flex items-center justify-center text-white/60 text-[8px]">Charts</div>
+          <div className="h-12 rounded bg-white/10 flex items-center justify-center text-white/60 text-[8px]">KPIs</div>
         </div>
-        <div className="h-16 w-full rounded bg-slate-800/30" />
+        <div className="h-16 w-full rounded bg-white/5 p-2 text-white/40 text-[7px] leading-relaxed">
+          Executive summary with key metrics...
+        </div>
       </div>
     ),
   },
   {
-    id: "academic",
-    name: "Academic",
-    description: "Serif fonts, multi-column precision, and elegant footers.",
-    color: "bg-[#fdfcf5]",
+    id: "invoice",
+    name: "Professional Invoice",
+    description: "Clean billing layout with tables and payment terms.",
+    color: "bg-white",
     textColor: "text-slate-900",
-    dots: ["#d1d1cf", "#d1d1cf", "#d1d1cf"],
+    border: true,
+    previewTitle: "INV-2026-042",
+    previewContent: "₹80,000",
     elements: (
-      <div className="space-y-3">
-        <div className="mx-auto h-4 w-1/2 rounded bg-slate-200" />
-        <div className="h-2 w-full rounded bg-slate-100" />
-        <div className="h-2 w-full rounded bg-slate-100" />
-        <div className="h-20 w-full rounded border border-slate-100 bg-white shadow-sm" />
-        <div className="h-2 w-3/4 rounded bg-slate-100" />
+      <div className="space-y-2">
+        <div className="flex justify-between items-center">
+          <div className="h-3 w-20 rounded bg-slate-200" />
+          <div className="text-[8px] text-emerald-600 font-bold">PAID</div>
+        </div>
+        <div className="h-px bg-slate-200" />
+        <div className="space-y-1">
+          <div className="flex justify-between text-[7px] text-slate-500">
+            <span>Web Development</span>
+            <span>₹45,000</span>
+          </div>
+          <div className="flex justify-between text-[7px] text-slate-500">
+            <span>UI/UX Design</span>
+            <span>₹25,000</span>
+          </div>
+        </div>
+        <div className="h-px bg-slate-200" />
+        <div className="flex justify-between text-[9px] font-bold text-slate-900">
+          <span>Total</span>
+          <span>₹70,000</span>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "resume_modern",
+    name: "Modern Resume",
+    description: "Contemporary CV with sidebar and clean typography.",
+    color: "bg-[#f8fafc]",
+    textColor: "text-slate-900",
+    previewTitle: "Priya Sharma",
+    previewContent: "Sr. Developer",
+    elements: (
+      <div className="flex gap-2 h-full">
+        <div className="w-1/3 bg-slate-200 rounded p-2 space-y-2">
+          <div className="w-8 h-8 rounded-full bg-slate-300 mx-auto" />
+          <div className="h-1.5 w-full rounded bg-slate-300" />
+          <div className="h-1 w-3/4 rounded bg-slate-300" />
+        </div>
+        <div className="flex-1 space-y-2">
+          <div className="h-4 w-3/4 rounded bg-slate-300" />
+          <div className="h-1.5 w-full rounded bg-slate-200" />
+          <div className="h-1.5 w-full rounded bg-slate-200" />
+          <div className="h-1.5 w-2/3 rounded bg-slate-200" />
+        </div>
       </div>
     ),
   },
   {
     id: "code",
-    name: "Developer",
-    description: "Ray.so style terminal windows with syntax highlighting.",
+    name: "Technical Docs",
+    description: "Dark terminal style with syntax highlighting for developers.",
     color: "bg-[#0a0d26]",
     textColor: "text-white",
-    dots: ["#ff5f57", "#ffbd2e", "#27c93f"],
+    previewTitle: "API Reference",
+    previewContent: "v2.0",
     elements: (
       <div className="space-y-3">
         <div className="rounded-lg bg-[#0d0f14] p-3 shadow-2xl">
@@ -60,11 +105,51 @@ const templateShowcase = [
             <div className="h-1.5 w-1.5 rounded-full bg-[#27c93f]" />
           </div>
           <div className="space-y-1.5">
-            <div className="h-1 w-2/3 rounded bg-pink-500/40" />
-            <div className="h-1 w-1/2 rounded bg-cyan-400/40" />
-            <div className="h-1 w-3/4 rounded bg-emerald-400/40" />
+            <div className="text-[7px] text-pink-400">GET /api/users</div>
+            <div className="text-[7px] text-cyan-400">POST /api/docs</div>
+            <div className="text-[7px] text-emerald-400">Authorization: Bearer</div>
           </div>
         </div>
+      </div>
+    ),
+  },
+  {
+    id: "proposal",
+    name: "Business Proposal",
+    description: "Compelling pitch layout with gradient headers.",
+    color: "bg-gradient-to-br from-indigo-600 to-purple-600",
+    textColor: "text-white",
+    previewTitle: "Digital Strategy",
+    previewContent: "₹5L Investment",
+    elements: (
+      <div className="space-y-3">
+        <div className="h-5 w-2/3 rounded bg-white/20" />
+        <div className="h-2 w-full rounded bg-white/10" />
+        <div className="h-2 w-4/5 rounded bg-white/10" />
+        <div className="mt-4 flex gap-2">
+          <div className="flex-1 rounded bg-white/10 p-2 text-center text-[7px] text-white/70">Timeline</div>
+          <div className="flex-1 rounded bg-amber-400/30 p-2 text-center text-[7px] text-amber-200 font-bold">ROI 250%</div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "academic",
+    name: "Academic Thesis",
+    description: "Serif fonts, structured sections, and formal citations.",
+    color: "bg-[#fdfcf5]",
+    textColor: "text-slate-900",
+    previewTitle: "Research Paper",
+    previewContent: "2026",
+    elements: (
+      <div className="space-y-3">
+        <div className="mx-auto h-4 w-1/2 rounded bg-slate-200 text-center" />
+        <div className="h-2 w-full rounded bg-slate-100" />
+        <div className="h-2 w-full rounded bg-slate-100" />
+        <div className="h-20 w-full rounded border border-slate-100 bg-white shadow-sm p-2 text-[6px] text-slate-400 leading-relaxed">
+          Abstract: This paper examines...
+        </div>
+        <div className="h-2 w-3/4 rounded bg-slate-100" />
       </div>
     ),
   },
@@ -422,13 +507,13 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid gap-8 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {templateShowcase.map((tpl) => (
               <div
                 key={tpl.id}
                 className="group flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white transition hover:shadow-2xl hover:shadow-slate-200"
               >
-                <div className={`p-8 ${tpl.color} relative overflow-hidden h-64 flex flex-col justify-center`}>
+                <div className={`p-6 ${tpl.color} relative overflow-hidden h-52 flex flex-col justify-center`}>
                   {/* Decorative background flair */}
                   <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/5 blur-2xl" />
                   <div className="absolute -bottom-12 -left-12 h-44 w-44 rounded-full bg-white/5 blur-3xl" />
@@ -436,25 +521,38 @@ export default function Home() {
                   {tpl.elements}
                 </div>
 
-                <div className="flex flex-1 flex-col p-6">
-                  <h3 className="text-xl font-bold text-slate-900">{tpl.name}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                <div className="flex flex-1 flex-col p-5">
+                  <h3 className="text-lg font-bold text-slate-900">{tpl.name}</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-slate-600">
                     {tpl.description}
                   </p>
-                  <div className="mt-6 pt-6 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                      Fully Optimized
+                  <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                      AI Ready
                     </span>
                     <Link
-                      href="/dashboard"
-                      className="text-sm font-bold text-slate-900 hover:underline"
+                      href={`/dashboard?template=${tpl.id}`}
+                      className="text-xs font-bold text-slate-900 hover:underline"
                     >
-                      Try template →
+                      Use Template →
                     </Link>
                   </div>
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* View All Templates Button */}
+          <div className="text-center mt-12">
+            <Link
+              href="/templates"
+              className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-8 py-4 text-sm font-bold text-slate-900 transition hover:bg-slate-900 hover:text-white"
+            >
+              View All 15 Templates
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
           </div>
         </section>
 
