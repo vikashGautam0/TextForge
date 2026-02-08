@@ -1,5 +1,5 @@
 # robots.txt for TextForge Studio - AI PDF Generator
-# https://textforge.site
+# https://textfroge.site
 
 # Allow all search engines to crawl the site
 User-agent: *
@@ -28,4 +28,4 @@ Allow: /*.js$
 # Crawl-delay: 1
 
 # Sitemap location
-Sitemap: https://textforge.site/sitemap.xml
+Sitemap: https://textfroge.site/sitemap.xml
