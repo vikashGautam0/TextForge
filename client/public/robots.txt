@@ -1,0 +1,31 @@
+# robots.txt for TextForge Studio - AI PDF Generator
+# https://textforge.studio
+
+# Allow all search engines to crawl the site
+User-agent: *
+Allow: /
+
+# Disallow crawling of API routes
+Disallow: /api/
+
+# Disallow crawling of authentication pages
+Disallow: /sign-in
+Disallow: /sign-up
+
+# Disallow crawling of user dashboard and private areas
+Disallow: /dashboard
+
+# Disallow crawling of admin areas (if any)
+Disallow: /admin
+
+# Allow crawling of static assets
+Allow: /images/
+Allow: /fonts/
+Allow: /*.css$
+Allow: /*.js$
+
+# Crawl-delay (optional, uncomment if needed)
+# Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://textforge.studio/sitemap.xml
