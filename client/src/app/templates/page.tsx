@@ -10,6 +10,9 @@ export const metadata: Metadata = {
         description: "Browse 15+ professional PDF templates for resumes, reports, invoices and more.",
         type: "website",
     },
+    alternates: {
+        canonical: "/templates",
+    },
 };
 
 export default function TemplatesPage() {

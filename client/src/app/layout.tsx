@@ -100,6 +100,9 @@ export const metadata: Metadata = {
     // yandex: 'your-yandex-verification-code',
     // bing: 'your-bing-verification-code',
   },
+  alternates: {
+    canonical: '/',
+  },
 };
 
 export default function RootLayout({

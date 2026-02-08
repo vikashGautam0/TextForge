@@ -9,6 +9,9 @@ export const metadata: Metadata = {
         description: "Terms and conditions for using TextForge Studio.",
         type: "website",
     },
+    alternates: {
+        canonical: "/terms",
+    },
 };
 
 export default function TermsPage() {

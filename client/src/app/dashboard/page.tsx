@@ -2,13 +2,26 @@
 
 import { useState, useEffect, Suspense, useCallback, useRef } from "react";
 import Link from "next/link";
-import RichTextEditor, { RichTextEditorRef } from "@/components/RichTextEditor";
+import dynamic from "next/dynamic";
 import { type TemplateType } from "@/components/TemplatePicker";
 import { supabase } from "@/lib/supabase";
 import { UserButton, useUser, useAuth, SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { fetchFromBackend, BACKEND_URL } from "@/lib/api";
+import type { RichTextEditorRef } from "@/components/RichTextEditor";
+
+// Lazy load heavy components for better performance
+const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
+  loading: () => (
+    <div className="flex flex-col gap-4 animate-pulse">
+      <div className="h-12 bg-slate-100 rounded-2xl" />
+      <div className="min-h-[400px] bg-slate-50 rounded-2xl border border-slate-200" />
+      <div className="h-12 bg-slate-100 rounded-2xl" />
+    </div>
+  ),
+  ssr: false, // Tiptap doesn't work well with SSR
+});
 
 
 export default function DashboardPage() {

@@ -9,6 +9,9 @@ export const metadata: Metadata = {
         description: "Our commitment to protecting your privacy and data security.",
         type: "website",
     },
+    alternates: {
+        canonical: "/privacy",
+    },
 };
 
 export default function PrivacyPage() {
