@@ -159,3 +159,108 @@ select:focus-visible {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Mobile-first utilities for addictive UX */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+/* Touch-friendly active states */
+@media (hover: none) {
+
+  button:active,
+  a:active,
+  [role="button"]:active {
+    transform: scale(0.97);
+    opacity: 0.9;
+  }
+}
+
+/* Smooth haptic-like feedback */
+@keyframes tap-feedback {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(0.95);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.tap-feedback:active {
+  animation: tap-feedback 0.15s ease-out;
+}
+
+/* Mobile slide-up animation */
+@keyframes slide-up-bounce {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  60% {
+    transform: translateY(-5%);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up-bounce 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Pulse glow for important mobile CTAs */
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 20px 10px rgba(99, 102, 241, 0);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* iOS-style backdrop blur for mobile nav */
+@supports (backdrop-filter: blur(20px)) {
+  .mobile-glass {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.85);
+  }
+}
+
+/* Prevent text selection on interactive elements for mobile */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Smooth scroll momentum for iOS */
+.scroll-momentum {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}
+
+/* Bottom nav shadow for depth */
+.shadow-top {
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+}

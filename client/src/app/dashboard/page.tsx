@@ -746,6 +746,65 @@ function DashboardPageContent() {
             </div>
           </div>
         </div>
+
+        {/* Mobile Bottom Navigation - Fixed for easy thumb access */}
+        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-slate-200 shadow-2xl shadow-slate-200/50 lg:hidden safe-bottom">
+          <div className="flex items-center justify-around px-2 py-2">
+            {/* Editor Tab */}
+            <button
+              onClick={() => setView('editor')}
+              className={`flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all ${view === 'editor' ? 'bg-slate-900 text-white scale-105' : 'text-slate-500'}`}
+            >
+              <span className="text-lg">✍️</span>
+              <span className="text-[9px] font-bold uppercase tracking-tighter">Edit</span>
+            </button>
+
+            {/* AI Magic - Center prominent button */}
+            <button
+              onClick={() => handleAIFormat('format')}
+              disabled={isFormatting}
+              className="relative -mt-6 flex flex-col items-center"
+            >
+              <div className={`h-14 w-14 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center shadow-xl shadow-violet-300 transition-all active:scale-95 ${isFormatting ? 'animate-pulse' : ''}`}>
+                <span className="text-2xl">{isFormatting ? '⌛' : '✨'}</span>
+              </div>
+              <span className="text-[9px] font-bold uppercase tracking-tighter text-violet-600 mt-1">AI Magic</span>
+            </button>
+
+            {/* Preview Tab */}
+            <button
+              onClick={() => setView('preview')}
+              className={`flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all ${view === 'preview' ? 'bg-slate-900 text-white scale-105' : 'text-slate-500'}`}
+            >
+              <span className="text-lg">👁️</span>
+              <span className="text-[9px] font-bold uppercase tracking-tighter">Preview</span>
+            </button>
+          </div>
+        </nav>
+
+        {/* Mobile Floating Export Button - Always visible */}
+        <div className="fixed bottom-20 right-4 z-40 lg:hidden">
+          <button
+            onClick={handleGeneratePDF}
+            disabled={isGenerating}
+            className="group flex items-center gap-2 rounded-2xl bg-indigo-600 px-5 py-4 text-sm font-bold text-white shadow-2xl shadow-indigo-300 transition-all hover:bg-indigo-700 active:scale-95 disabled:opacity-50"
+          >
+            {isGenerating ? (
+              <>
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                <span>Exporting...</span>
+              </>
+            ) : (
+              <>
+                <span className="text-lg">📄</span>
+                <span>Export PDF</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Extra padding for mobile bottom nav */}
+        <div className="h-20 lg:hidden" />
       </main>
     </div>
   );

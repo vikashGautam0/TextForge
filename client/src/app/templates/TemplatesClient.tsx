@@ -405,36 +405,43 @@ export default function TemplatesClient() {
                 </div>
             </nav>
 
-            <main className="mx-auto max-w-7xl px-6 py-16">
+            <main className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-16">
                 {/* Hero */}
-                <div className="mb-12 text-center">
-                    <span className="inline-block rounded-full bg-gradient-to-r from-slate-900 to-slate-700 px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest text-white mb-4">
+                <div className="mb-8 sm:mb-12 text-center">
+                    <span className="inline-block rounded-full bg-gradient-to-r from-slate-900 to-slate-700 px-3 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-white mb-3 sm:mb-4">
                         15 Professional Templates
                     </span>
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900">Template Showcase</h1>
-                    <p className="mt-4 text-lg text-slate-500 max-w-2xl mx-auto">
-                        Click on any template to see a full preview. Each template is optimized for professional documents.
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900">Template Showcase</h1>
+                    <p className="mt-3 sm:mt-4 text-sm sm:text-lg text-slate-500 max-w-2xl mx-auto px-4">
+                        Tap any template to preview. Each one is optimized for professional documents.
                     </p>
                 </div>
 
-                {/* Filter Tabs */}
-                <div className="flex justify-center gap-2 mb-12">
-                    {["all", "Starter", "Creator", "Pro"].map((filter) => (
-                        <button
-                            key={filter}
-                            onClick={() => setActiveFilter(filter)}
-                            className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition ${activeFilter === filter
-                                ? "bg-slate-900 text-white"
-                                : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
-                                }`}
-                        >
-                            {filter === "all" ? "All Templates" : filter}
-                        </button>
-                    ))}
+                {/* Filter Tabs - Horizontal scroll on mobile */}
+                <div className="flex justify-start sm:justify-center gap-2 mb-8 sm:mb-12 overflow-x-auto no-scrollbar px-1 -mx-4 sm:mx-0 pb-2">
+                    <div className="flex gap-2 px-4 sm:px-0">
+                        {["all", "Starter", "Creator", "Pro"].map((filter) => (
+                            <button
+                                key={filter}
+                                onClick={() => setActiveFilter(filter)}
+                                className={`px-4 sm:px-5 py-2.5 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-widest transition whitespace-nowrap active:scale-95 ${activeFilter === filter
+                                    ? "bg-slate-900 text-white shadow-lg"
+                                    : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
+                                    }`}
+                            >
+                                {filter === "all" ? "All" : filter}
+                                {filter !== "all" && (
+                                    <span className="ml-1.5 opacity-60">
+                                        ({TEMPLATES.filter(t => t.tier === filter).length})
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                {/* Template Grid with Previews */}
-                <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {/* Template Grid - Better mobile layout */}
+                <div className="grid gap-4 sm:gap-6 lg:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                     {filteredTemplates.map((template) => (
                         <div
                             key={template.id}
@@ -536,32 +543,35 @@ export default function TemplatesClient() {
                 </div>
             </main>
 
-            {/* Full Preview Modal */}
+            {/* Full Preview Modal - Mobile optimized */}
             {selectedTemplate && (
                 <div
-                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 md:p-8"
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-8"
                     onClick={() => setSelectedTemplate(null)}
                 >
                     <div
-                        className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
+                        className="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden shadow-2xl animate-slide-up sm:animate-none"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Modal Header */}
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-                            <div className="flex items-center gap-3">
-                                <span className="text-3xl">{selectedTemplate.icon}</span>
+                        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100">
+                            {/* Drag handle for mobile */}
+                            <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 bg-slate-200 rounded-full sm:hidden" />
+
+                            <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-0">
+                                <span className="text-2xl sm:text-3xl">{selectedTemplate.icon}</span>
                                 <div>
-                                    <h3 className="font-bold text-slate-900">{selectedTemplate.name}</h3>
-                                    <p className="text-xs text-slate-500">{selectedTemplate.description}</p>
+                                    <h3 className="font-bold text-sm sm:text-base text-slate-900">{selectedTemplate.name}</h3>
+                                    <p className="text-[10px] sm:text-xs text-slate-500 hidden sm:block">{selectedTemplate.description}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white ${TIER_COLORS[selectedTemplate.tier]}`}>
+                            <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-0">
+                                <span className={`rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-[8px] sm:text-[10px] font-bold uppercase tracking-widest text-white ${TIER_COLORS[selectedTemplate.tier]}`}>
                                     {selectedTemplate.tier}
                                 </span>
                                 <button
                                     onClick={() => setSelectedTemplate(null)}
-                                    className="p-2 rounded-full hover:bg-slate-100 transition"
+                                    className="p-2 rounded-full hover:bg-slate-100 transition active:scale-95"
                                 >
                                     <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
