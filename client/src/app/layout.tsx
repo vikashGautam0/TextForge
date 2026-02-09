@@ -98,7 +98,9 @@ export const metadata: Metadata = {
   verification: {
     google: 'FZ_Em2qxl9ZAjf_JBL6kKJfqAaz6NWiYFMvxbFe8mEE',
     // yandex: 'your-yandex-verification-code',
-    // bing: 'your-bing-verification-code',
+    other: {
+      'msvalidate.01': 'AE2F4A7BBEFA489F42AAF59E2912D702',
+    },
   },
   alternates: {
     canonical: '/',
