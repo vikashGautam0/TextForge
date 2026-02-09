@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { SignedIn, SignedOut, SignInButton, UserButton, useAuth } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, UserButton, useAuth, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { fetchFromBackend } from "@/lib/api";
 
@@ -194,13 +194,30 @@ export default function Home() {
   }, []);
 
   const { getToken } = useAuth();
+  const { isSignedIn } = useUser();
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+  const [pendingPlan, setPendingPlan] = useState<string | null>(null);
 
   const handleCheckout = async (plan: string) => {
+    // Check if user is signed in
+    if (!isSignedIn) {
+      setPendingPlan(plan);
+      setShowSignInPrompt(true);
+      return;
+    }
+
     try {
       const response = await fetchFromBackend("/razorpay/order", {
         method: "POST",
         body: JSON.stringify({ plan }),
       }, getToken);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Order creation failed:", errorText);
+        alert("Failed to create order. Please try again.");
+        return;
+      }
 
       const order = await response.json();
 
@@ -225,6 +242,7 @@ export default function Home() {
       rzp.open();
     } catch (error) {
       console.error("Razorpay checkout failed:", error);
+      alert("Payment failed. Please check your connection and try again.");
     }
   };
 
@@ -333,6 +351,34 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
       />
+
+      {/* Sign In Prompt Modal */}
+      {showSignInPrompt && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="mx-4 w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <h3 className="text-xl font-bold text-slate-900">Sign in to continue</h3>
+            <p className="mt-2 text-sm text-slate-600">
+              You need to sign in before upgrading to the <span className="font-semibold capitalize">{pendingPlan}</span> plan.
+            </p>
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={() => {
+                  setShowSignInPrompt(false);
+                  setPendingPlan(null);
+                }}
+                className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <SignInButton mode="modal" forceRedirectUrl={`/?checkout=${pendingPlan}`}>
+                <button className="flex-1 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">
+                  Sign In
+                </button>
+              </SignInButton>
+            </div>
+          </div>
+        </div>
+      )}
 
       <header className="sticky top-0 z-50 w-full border-b border-slate-200/50 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
