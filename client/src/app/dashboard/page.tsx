@@ -167,10 +167,6 @@ function DashboardPageContent() {
       friendlyMessage = "Session expired. Please sign in again.";
     } else if (rawMessage.includes("Content is required")) {
       friendlyMessage = "Don't forget to add some content first!";
-    } else if (rawMessage.includes("Backend URL is missing in production")) {
-      friendlyMessage = "Configuration Error: Set NEXT_PUBLIC_BACKEND_URL in your production environment.";
-    } else if (rawMessage.includes("Backend request failed")) {
-      friendlyMessage = "Backend unreachable from this environment. Check NEXT_PUBLIC_BACKEND_URL, CORS, and backend uptime.";
     } else if (rawMessage.includes("Failed to fetch") || rawMessage.includes("NetworkError")) {
       const isLocalhost = BACKEND_URL.includes("localhost");
       const isProd = window.location.hostname !== "localhost";
