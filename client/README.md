@@ -27,7 +27,6 @@ Optimized for the Indian market with native support for:
 ### **🔐 SaaS Infrastructure**
 *   **Authentication**: Secure user management via **Clerk**.
 *   **Database**: Real-time state and usage tracking using **Supabase (PostgreSQL)**.
-*   **Rate Limiting**: DDoS protection and API gating via **Upstash Redis**.
 
 ---
 
@@ -51,7 +50,6 @@ Optimized for the Indian market with native support for:
 *   **Backend**: Next.js Serverless Functions.
 *   **Storage/DB**: Supabase.
 *   **Payments**: Razorpay SDK.
-*   **Rate Limiting**: `@upstash/ratelimit`.
 
 ---
 
@@ -78,10 +76,6 @@ RAZORPAY_KEY_SECRET=
 RAZORPAY_WEBHOOK_SECRET=
 RAZORPAY_STARTER_PLAN_ID=
 RAZORPAY_TEAM_PLAN_ID=
-
-# Upstash Redis
-UPSTASH_REDIS_REST_URL=
-UPSTASH_REDIS_REST_TOKEN=
 ```
 
 ---
