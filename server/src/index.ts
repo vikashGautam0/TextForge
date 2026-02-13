@@ -11,6 +11,14 @@ import razorpayRoutes from "./routes/razorpay.js";
 import subscriptionRoutes from "./routes/subscription.js";
 import generateRoutes from "./routes/generate.js";
 
+// Ensure Clerk keys are available in the format the SDK expects
+if (!process.env.CLERK_PUBLISHABLE_KEY && process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
+    process.env.CLERK_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+}
+if (!process.env.CLERK_SECRET_KEY && process.env.NEXT_PUBLIC_CLERK_SECRET_KEY) {
+    process.env.CLERK_SECRET_KEY = process.env.NEXT_PUBLIC_CLERK_SECRET_KEY;
+}
+
 const app = express();
 const port = Number(process.env.PORT) || 3001;
 
