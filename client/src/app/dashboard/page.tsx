@@ -130,18 +130,22 @@ function DashboardPageContent() {
         }, getToken);
 
         if (response.ok) {
-          const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
-
-          setPdfUrl(prevUrl => {
-            if (prevUrl) window.URL.revokeObjectURL(prevUrl);
-            return url;
-          });
-          setError("");
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+            // Handle JSON preview if your backend ever returns URLs instead of blobs
+          } else {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            setPdfUrl(prevUrl => {
+              if (prevUrl) window.URL.revokeObjectURL(prevUrl);
+              return url;
+            });
+            setError("");
+          }
         } else {
-          const errorData = await response.json();
-          // Don't show technical preview errors directly, just log them
-          console.warn("Live Preview Error:", errorData.error);
+          // If not ok, fetchFromBackend now throws, but we handle it here just in case
+          console.warn("Live Preview Error: Server returned non-ok status");
         }
       } catch (err) {
         console.error("Preview generation fatal error", err);
@@ -176,8 +180,10 @@ function DashboardPageContent() {
       } else {
         friendlyMessage = "Unable to connect to the server. Please check your internet connection or verify the backend status.";
       }
-    } else if (rawMessage.includes("Unexpected token") || rawMessage.includes("parsing")) {
-      friendlyMessage = "Server returned an invalid response. Trying to recover...";
+    } else if (rawMessage.includes("Unexpected token") || rawMessage.includes("parsing") || rawMessage.includes("is not valid JSON")) {
+      friendlyMessage = "The server sent back a webpage instead of data. This usually means the BACKEND_URL is incorrect or the server is down.";
+    } else if (rawMessage.includes("Server returned an error")) {
+      friendlyMessage = rawMessage; // Use the descriptive error from fetchFromBackend
     }
 
     setError(friendlyMessage);
@@ -215,8 +221,14 @@ function DashboardPageContent() {
       }, getToken);
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "AI formatting failed");
+        let errorMsg = "AI formatting failed";
+        try {
+          const data = await response.json();
+          errorMsg = data.error || errorMsg;
+        } catch {
+          errorMsg = "Server error (HTML response). Check backend URL.";
+        }
+        throw new Error(errorMsg);
       }
 
       const data = await response.json();
@@ -301,8 +313,14 @@ function DashboardPageContent() {
       }, getToken);
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Generation failed");
+        let errorMsg = "Generation failed";
+        try {
+          const data = await response.json();
+          errorMsg = data.error || errorMsg;
+        } catch {
+          errorMsg = "Server error (HTML response). Check backend URL.";
+        }
+        throw new Error(errorMsg);
       }
 
       const blob = await response.blob();

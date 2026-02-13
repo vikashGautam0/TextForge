@@ -19,5 +19,17 @@ export async function fetchFromBackend(path: string, options: RequestInit = {}, 
         headers,
     });
 
+    // Check if the response is JSON
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+        return response;
+    }
+
+    if (!response.ok) {
+        const text = await response.text();
+        console.error(`Backend error (${response.status}):`, text.substring(0, 200));
+        throw new Error(`Server returned an error (${response.status}). Building... Please wait or check configuration.`);
+    }
+
     return response;
 }
