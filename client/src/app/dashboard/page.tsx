@@ -172,12 +172,12 @@ function DashboardPageContent() {
       const isProd = window.location.hostname !== "localhost";
 
       if (isProd && isLocalhost) {
-        friendlyMessage = "Configuration Error: The live site is trying to connect to a local backend. Please set NEXT_PUBLIC_BACKEND_URL in Vercel.";
+        friendlyMessage = "Configuration Error: The live site is trying to connect to a local backend. Please set NEXT_PUBLIC_BACKEND_URL in your hosting provider settings (Vercel/Railway).";
       } else {
-        friendlyMessage = "Connection unstable. Live Engine is trying to reconnect...";
+        friendlyMessage = "Unable to connect to the server. Please check your internet connection or verify the backend status.";
       }
     } else if (rawMessage.includes("Unexpected token") || rawMessage.includes("parsing")) {
-      friendlyMessage = "Engine hiccup. Trying to recover...";
+      friendlyMessage = "Server returned an invalid response. Trying to recover...";
     }
 
     setError(friendlyMessage);
@@ -356,7 +356,7 @@ function DashboardPageContent() {
         <div className="flex flex-1 flex-col gap-6 overflow-y-auto">
           {/* Project Settings */}
           <div className="space-y-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Project Engine</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Settings</p>
             <div className="space-y-0.5">
               <button onClick={() => setView('editor')} className={`flex w-full items-center gap-2.5 rounded-lg p-2 text-left text-[11px] font-medium transition ${view === 'editor' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-600 hover:bg-slate-50'}`}>
                 <span>✍️</span> Editor
@@ -682,7 +682,7 @@ function DashboardPageContent() {
                     {/* Preview Header with Refresh */}
                     <div className="flex items-center justify-between border-b border-slate-100 bg-white/50 px-4 sm:px-6 py-3 backdrop-blur-sm">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Live Engine</h3>
+                        <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Preview Engine</h3>
                         {isPreviewLoading && <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />}
                       </div>
                       <button
