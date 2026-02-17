@@ -182,10 +182,13 @@ function DashboardPageContent() {
       }
     } else if (rawMessage.includes("Unexpected token") || rawMessage.includes("parsing") || rawMessage.includes("is not valid JSON")) {
       friendlyMessage = "The server sent back a webpage instead of data. This usually means the BACKEND_URL is incorrect or the server is down.";
-    } else if (rawMessage.includes("Server returned an error")) {
-      friendlyMessage = rawMessage; // Use the descriptive error from fetchFromBackend
+    } else if (rawMessage.includes("Method not allowed")) {
+      friendlyMessage = rawMessage;
+    } else if (rawMessage.includes("Endpoint not found")) {
+      friendlyMessage = rawMessage;
+    } else if (rawMessage.includes("Backend server is unreachable") || rawMessage.includes("temporarily unavailable")) {
+      friendlyMessage = rawMessage;
     }
-
     setError(friendlyMessage);
     // Clear error automatically after 6s
     const timer = setTimeout(() => setError(""), 6000);
