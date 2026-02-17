@@ -35,6 +35,60 @@ router.post("/order", ClerkExpressRequireAuth() as any, async (req: any, res) =>
     }
 });
 
+// Verify payment and activate subscription immediately after Razorpay modal success
+router.post("/verify", ClerkExpressRequireAuth() as any, async (req: any, res) => {
+    try {
+        const userId = req.auth.userId;
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature, plan } = req.body;
+
+        if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+            return res.status(400).json({ error: "Missing payment verification fields" });
+        }
+
+        // Verify signature using Razorpay key secret
+        const keySecret = process.env.RAZORPAY_KEY_SECRET;
+        if (!keySecret) {
+            console.error("RAZORPAY_KEY_SECRET is not defined");
+            return res.status(500).json({ error: "Server configuration error" });
+        }
+
+        const expectedSignature = crypto
+            .createHmac("sha256", keySecret)
+            .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+            .digest("hex");
+
+        if (expectedSignature !== razorpay_signature) {
+            console.error("[RAZORPAY_VERIFY] Invalid payment signature");
+            return res.status(400).json({ error: "Payment verification failed" });
+        }
+
+        // Signature is valid — activate the subscription
+        const planType = plan || "creator";
+        console.log(`[RAZORPAY_VERIFY] Activating ${planType} plan for user ${userId}`);
+
+        const { error: upsertError } = await supabase.from("subscriptions").upsert({
+            user_id: userId,
+            status: "active",
+            plan_type: planType,
+            pdf_usage_count: 0,
+            ai_usage_count: 0,
+            last_reset_date: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id' });
+
+        if (upsertError) {
+            console.error("[RAZORPAY_VERIFY] Supabase upsert error:", upsertError);
+            return res.status(500).json({ error: "Failed to activate subscription" });
+        }
+
+        console.log(`[RAZORPAY_VERIFY] ✅ ${planType} plan activated for user ${userId}`);
+        res.json({ success: true, plan_type: planType, status: "active" });
+    } catch (error: any) {
+        console.error("[RAZORPAY_VERIFY_ERROR]", error);
+        res.status(500).json({ error: error.message || "Verification failed" });
+    }
+});
+
 router.post("/webhook", express.text({ type: "application/json" }), async (req, res) => {
     try {
         const signature = req.headers["x-razorpay-signature"] as string;

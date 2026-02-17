@@ -228,9 +228,31 @@ export default function Home() {
         name: "TextFroge Studio",
         description: `Upgrade to ${plan} plan`,
         order_id: order.id,
-        handler: function () {
-          // Success! Redirect to dashboard with success param
-          window.location.href = "/dashboard?success=true";
+        handler: async function (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) {
+          try {
+            // Verify payment and activate subscription immediately
+            const verifyRes = await fetchFromBackend("/razorpay/verify", {
+              method: "POST",
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                plan: plan,
+              }),
+            }, getToken);
+
+            if (verifyRes.ok) {
+              window.location.href = "/dashboard?success=true";
+            } else {
+              console.error("Payment verification failed");
+              alert("Payment received but plan activation failed. Please contact support.");
+              window.location.href = "/dashboard?success=true";
+            }
+          } catch (err) {
+            console.error("Verification error:", err);
+            // Still redirect — webhook will handle it as backup
+            window.location.href = "/dashboard?success=true";
+          }
         },
         theme: {
           color: "#0f172a",
