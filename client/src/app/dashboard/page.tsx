@@ -452,6 +452,40 @@ function DashboardPageContent() {
 
           {/* Stats / AI Magic Credits */}
           <div className="mt-auto space-y-4 rounded-3xl bg-slate-50 p-5 shadow-inner">
+            {/* Plan Badge */}
+            {user && subscription && (
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Your Plan</p>
+                {(() => {
+                  const plan = subscription.plan_type || "starter";
+                  const isPremium = !["free", "starter"].includes(plan);
+                  const planColors: Record<string, string> = {
+                    free: "bg-slate-100 text-slate-600 border-slate-200",
+                    starter: "bg-slate-100 text-slate-600 border-slate-200",
+                    creator: "bg-violet-100 text-violet-700 border-violet-200",
+                    pro: "bg-indigo-100 text-indigo-700 border-indigo-200",
+                    business: "bg-emerald-100 text-emerald-700 border-emerald-200",
+                    lifetime: "bg-amber-100 text-amber-700 border-amber-200",
+                  };
+                  return (
+                    <span className={`rounded-full border px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider ${planColors[plan] || planColors.starter}`}>
+                      {isPremium && "⭐ "}{plan}
+                    </span>
+                  );
+                })()}
+              </div>
+            )}
+
+            {/* Plan Status */}
+            {user && subscription && !["free", "starter"].includes(subscription.plan_type) && (
+              <div className="flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-100 px-3 py-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <p className="text-[10px] font-bold text-emerald-700">
+                  {subscription.plan_type === "lifetime" ? "Lifetime Access Active" : `${subscription.plan_type.charAt(0).toUpperCase() + subscription.plan_type.slice(1)} Plan Active`}
+                </p>
+              </div>
+            )}
+
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
               {user ? "AI Format Credits" : "Guest Mode"}
             </p>
@@ -463,9 +497,6 @@ function DashboardPageContent() {
                   if (plan === "starter" || plan === "free") return `${Math.max(0, 5 - aiCount)} / 5 Left`;
                   return "∞ Unlimited";
                 })() : "Members Only"}
-              </span>
-              <span className="text-slate-400 uppercase text-[9px] font-bold tracking-tighter">
-                {user ? `Plan: ${subscription?.plan_type || 'Starter'}` : "Guest Mode"}
               </span>
             </div>
             <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
