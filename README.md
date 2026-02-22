@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/logo.png" alt="TextFroge Logo" width="80" />
+<img src="client/public/logo.png" alt="TextFroge Logo" width="80" />
 
 # TextFroge Studio
 
