@@ -105,7 +105,7 @@ export default function BlogPage() {
                                 </div>
                             </div>
                             <div className="p-6">
-                                <div className="flex items-center gap-3 text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-3">
+                                <div className="flex items-center gap-3 text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-3">
                                     <span>{post.date}</span>
                                     <span className="h-1 w-1 rounded-full bg-slate-300" />
                                     <span>{post.readTime}</span>
@@ -113,7 +113,7 @@ export default function BlogPage() {
                                 <h2 className="text-xl font-bold text-slate-900 group-hover:text-slate-700 transition">
                                     {post.title}
                                 </h2>
-                                <p className="mt-2 text-sm text-slate-500 leading-relaxed">
+                                <p className="mt-2 text-sm text-slate-600 leading-relaxed">
                                     {post.excerpt}
                                 </p>
                                 <div className="mt-6 pt-4 border-t border-slate-100">
@@ -131,7 +131,7 @@ export default function BlogPage() {
                     <h2 className="text-3xl font-bold text-white">
                         Ready to create stunning PDFs?
                     </h2>
-                    <p className="mt-3 text-slate-400 max-w-xl mx-auto">
+                    <p className="mt-3 text-slate-300 max-w-xl mx-auto">
                         Join thousands of professionals using TextForge Studio to create beautiful documents in seconds.
                     </p>
                     <Link

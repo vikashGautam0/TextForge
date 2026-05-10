@@ -30,69 +30,11 @@ body {
   overflow-x: hidden;
 }
 
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-
-  50% {
-    transform: translateY(-10px) rotate(0.5deg);
-  }
-}
-
-@keyframes scan {
-  0% {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-
-  50% {
-    opacity: 0.5;
-  }
-
-  100% {
-    transform: translateY(400%);
-    opacity: 0;
-  }
-}
-
-@keyframes grow-bar {
-  0% {
-    transform: scaleY(0.1);
-  }
-
-  100% {
-    transform: scaleY(1);
-  }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-scan {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #3b82f6, transparent);
-  box-shadow: 0 0 15px #3b82f6;
-  z-index: 50;
-  animation: scan 3s linear infinite;
-}
-
-.animate-grow-bar {
-  transform-origin: bottom;
-  animation: grow-bar 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
-}
-
 * {
   box-sizing: border-box;
 }
 
+/* Focus styles for accessibility */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -102,8 +44,8 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
+/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {
@@ -112,31 +54,9 @@ select:focus-visible {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-
-  .animate-float,
-  .animate-scan,
-  .animate-grow-bar {
-    animation: none !important;
-  }
 }
 
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.reveal {
-  animation: fade-in-up 0.8s ease-out forwards;
-  opacity: 0;
-}
-
+/* Scroll reveal animations */
 [data-scroll] {
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
@@ -151,6 +71,7 @@ select:focus-visible {
   transform: translateY(20px);
 }
 
+/* Scrollbar hiding utility */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -160,107 +81,17 @@ select:focus-visible {
   scrollbar-width: none;
 }
 
-/* Mobile-first utilities for addictive UX */
+/* Safe area insets for mobile */
 .safe-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
-.safe-top {
-  padding-top: env(safe-area-inset-top, 0);
-}
-
 /* Touch-friendly active states */
 @media (hover: none) {
-
   button:active,
   a:active,
   [role="button"]:active {
     transform: scale(0.97);
     opacity: 0.9;
   }
-}
-
-/* Smooth haptic-like feedback */
-@keyframes tap-feedback {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(0.95);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-.tap-feedback:active {
-  animation: tap-feedback 0.15s ease-out;
-}
-
-/* Mobile slide-up animation */
-@keyframes slide-up-bounce {
-  0% {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-
-  60% {
-    transform: translateY(-5%);
-    opacity: 1;
-  }
-
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.animate-slide-up {
-  animation: slide-up-bounce 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Pulse glow for important mobile CTAs */
-@keyframes pulse-glow {
-
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
-  }
-
-  50% {
-    box-shadow: 0 0 20px 10px rgba(99, 102, 241, 0);
-  }
-}
-
-.pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-/* iOS-style backdrop blur for mobile nav */
-@supports (backdrop-filter: blur(20px)) {
-  .mobile-glass {
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    background: rgba(255, 255, 255, 0.85);
-  }
-}
-
-/* Prevent text selection on interactive elements for mobile */
-.no-select {
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
-}
-
-/* Smooth scroll momentum for iOS */
-.scroll-momentum {
-  -webkit-overflow-scrolling: touch;
-  overflow-y: auto;
-}
-
-/* Bottom nav shadow for depth */
-.shadow-top {
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
 }

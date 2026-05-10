@@ -1,11 +1,6 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import { SignedIn, SignedOut, SignInButton, UserButton, useAuth, useUser } from "@clerk/nextjs";
 import Image from "next/image";
-import { fetchFromBackend } from "@/lib/api";
-
+import { HeaderWrapper, PricingSection, ScrollReveal } from "./HomeClientComponents";
 
 const templateShowcase = [
   {
@@ -14,8 +9,6 @@ const templateShowcase = [
     description: "Bold headers, clean typography, and corporate-ready layouts.",
     color: "bg-slate-900",
     textColor: "text-white",
-    previewTitle: "Q4 Summary",
-    previewContent: "Revenue +23%",
     elements: (
       <div className="space-y-3">
         <div className="h-6 w-full rounded bg-white/20" />
@@ -37,8 +30,6 @@ const templateShowcase = [
     color: "bg-white",
     textColor: "text-slate-900",
     border: true,
-    previewTitle: "INV-2026-042",
-    previewContent: "₹80,000",
     elements: (
       <div className="space-y-2">
         <div className="flex justify-between items-center">
@@ -70,8 +61,6 @@ const templateShowcase = [
     description: "Contemporary CV with sidebar and clean typography.",
     color: "bg-[#f8fafc]",
     textColor: "text-slate-900",
-    previewTitle: "Priya Sharma",
-    previewContent: "Sr. Developer",
     elements: (
       <div className="flex gap-2 h-full">
         <div className="w-1/3 bg-slate-200 rounded p-2 space-y-2">
@@ -94,8 +83,6 @@ const templateShowcase = [
     description: "Dark terminal style with syntax highlighting for developers.",
     color: "bg-[#0a0d26]",
     textColor: "text-white",
-    previewTitle: "API Reference",
-    previewContent: "v2.0",
     elements: (
       <div className="space-y-3">
         <div className="rounded-lg bg-[#0d0f14] p-3 shadow-2xl">
@@ -119,8 +106,6 @@ const templateShowcase = [
     description: "Compelling pitch layout with gradient headers.",
     color: "bg-gradient-to-br from-indigo-600 to-purple-600",
     textColor: "text-white",
-    previewTitle: "Digital Strategy",
-    previewContent: "₹5L Investment",
     elements: (
       <div className="space-y-3">
         <div className="h-5 w-2/3 rounded bg-white/20" />
@@ -139,8 +124,6 @@ const templateShowcase = [
     description: "Serif fonts, structured sections, and formal citations.",
     color: "bg-[#fdfcf5]",
     textColor: "text-slate-900",
-    previewTitle: "Research Paper",
-    previewContent: "2026",
     elements: (
       <div className="space-y-3">
         <div className="mx-auto h-4 w-1/2 rounded bg-slate-200 text-center" />
@@ -173,195 +156,127 @@ const features = [
   },
 ];
 
+// Structured Data for SEO
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "TextForge Studio",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR",
+    "availability": "https://schema.org/InStock"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "ratingCount": "127"
+  },
+  "description": "Create professional PDFs instantly with TextForge Studio. Free AI-powered PDF generator with 15+ templates. Convert text to PDF, images to PDF, create resumes, invoices, reports & more.",
+  "featureList": [
+    "AI-powered PDF generation",
+    "15+ professional templates",
+    "Resume builder with multiple styles",
+    "Image to PDF converter",
+    "Text to PDF conversion",
+    "Invoice generator",
+    "Report creator",
+    "Contract templates",
+    "Custom branding options",
+    "Unlimited exports"
+  ],
+  "screenshot": "/logo.png",
+  "author": {
+    "@type": "Organization",
+    "name": "TextForge Studio"
+  }
+};
+
+const faqStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is TextForge Studio really free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Our Starter plan is completely free and includes 10 PDF exports per month with basic templates. Upgrade to unlock unlimited exports, premium templates, and AI formatting features."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What types of PDFs can I create?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Create resumes, invoices, reports, academic papers, technical documentation, contracts, letters, and more with 15+ professional templates. Convert text to PDF or images to PDF instantly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the AI formatting work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our AI analyzes your content and automatically formats it according to your chosen template. It handles headings, spacing, typography, and layout to create professional-looking documents instantly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I customize the templates?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely! Customize fonts, colors, add your logo, and adjust layouts. Pro and Business plans offer advanced branding options to match your company's visual identity perfectly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is my data secure?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! All documents are processed securely, and we never store your content without permission. Your privacy and data security are our top priorities."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use this for commercial projects?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! All paid plans include commercial usage rights. Create client proposals, business reports, invoices, and any professional documents for your business or clients."
+      }
+    }
+  ]
+};
+
+const faqItems = [
+  {
+    question: "Is TextForge Studio really free?",
+    answer: "Yes! Our Starter plan is completely free and includes 10 PDF exports per month with basic templates. Upgrade to unlock unlimited exports, premium templates, and AI formatting features.",
+  },
+  {
+    question: "What types of PDFs can I create?",
+    answer: "Create resumes, invoices, reports, academic papers, technical documentation, contracts, letters, and more with 15+ professional templates. Convert text to PDF or images to PDF instantly.",
+  },
+  {
+    question: "How does the AI formatting work?",
+    answer: "Our AI analyzes your content and automatically formats it according to your chosen template. It handles headings, spacing, typography, and layout to create professional-looking documents instantly.",
+  },
+  {
+    question: "Can I customize the templates?",
+    answer: "Absolutely! Customize fonts, colors, add your logo, and adjust layouts. Pro and Business plans offer advanced branding options to match your company's visual identity perfectly.",
+  },
+  {
+    question: "Is my data secure?",
+    answer: "Yes! All documents are processed securely, and we never store your content without permission. Your privacy and data security are our top priorities.",
+  },
+  {
+    question: "Can I use this for commercial projects?",
+    answer: "Yes! All paid plans include commercial usage rights. Create client proposals, business reports, invoices, and any professional documents for your business or clients.",
+  },
+];
+
 export default function Home() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.setAttribute('data-scroll', 'in');
-        }
-      });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('section').forEach(section => {
-      section.setAttribute('data-scroll', 'out');
-      observer.observe(section);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  const { getToken } = useAuth();
-  const { isSignedIn } = useUser();
-  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
-  const [pendingPlan, setPendingPlan] = useState<string | null>(null);
-
-  const handleCheckout = async (plan: string) => {
-    // Check if user is signed in
-    if (!isSignedIn) {
-      setPendingPlan(plan);
-      setShowSignInPrompt(true);
-      return;
-    }
-
-    try {
-      const response = await fetchFromBackend("/razorpay/order", {
-        method: "POST",
-        body: JSON.stringify({ plan }),
-      }, getToken);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Order creation failed:", errorText);
-        alert("Failed to create order. Please try again.");
-        return;
-      }
-
-      const order = await response.json();
-
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: order.amount,
-        currency: "INR",
-        name: "TextFroge Studio",
-        description: `Upgrade to ${plan} plan`,
-        order_id: order.id,
-        handler: async function (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) {
-          try {
-            // Verify payment and activate subscription immediately
-            const verifyRes = await fetchFromBackend("/razorpay/verify", {
-              method: "POST",
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                plan: plan,
-              }),
-            }, getToken);
-
-            if (verifyRes.ok) {
-              window.location.href = "/dashboard?success=true";
-            } else {
-              console.error("Payment verification failed");
-              alert("Payment received but plan activation failed. Please contact support.");
-              window.location.href = "/dashboard?success=true";
-            }
-          } catch (err) {
-            console.error("Verification error:", err);
-            // Still redirect — webhook will handle it as backup
-            window.location.href = "/dashboard?success=true";
-          }
-        },
-        theme: {
-          color: "#0f172a",
-        },
-      };
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
-    } catch (error) {
-      console.error("Razorpay checkout failed:", error);
-      alert("Payment failed. Please check your connection and try again.");
-    }
-  };
-
-  // Structured Data for SEO
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "TextForge Studio",
-    "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Web",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "INR",
-      "availability": "https://schema.org/InStock"
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "ratingCount": "127"
-    },
-    "description": "Create professional PDFs instantly with TextForge Studio. Free AI-powered PDF generator with 15+ templates. Convert text to PDF, images to PDF, create resumes, invoices, reports & more.",
-    "featureList": [
-      "AI-powered PDF generation",
-      "15+ professional templates",
-      "Resume builder with multiple styles",
-      "Image to PDF converter",
-      "Text to PDF conversion",
-      "Invoice generator",
-      "Report creator",
-      "Contract templates",
-      "Custom branding options",
-      "Unlimited exports"
-    ],
-    "screenshot": "/logo.png",
-    "author": {
-      "@type": "Organization",
-      "name": "TextForge Studio"
-    }
-  };
-
-  // FAQ Structured Data for SEO
-  const faqStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Is TextForge Studio really free?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes! Our Starter plan is completely free and includes 10 PDF exports per month with basic templates. Upgrade to unlock unlimited exports, premium templates, and AI formatting features."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What types of PDFs can I create?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Create resumes, invoices, reports, academic papers, technical documentation, contracts, letters, and more with 15+ professional templates. Convert text to PDF or images to PDF instantly."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How does the AI formatting work?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Our AI analyzes your content and automatically formats it according to your chosen template. It handles headings, spacing, typography, and layout to create professional-looking documents instantly."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can I customize the templates?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Absolutely! Customize fonts, colors, add your logo, and adjust layouts. Pro and Business plans offer advanced branding options to match your company's visual identity perfectly."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is my data secure?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes! All documents are processed securely, and we never store your content without permission. Your privacy and data security are our top priorities."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can I use this for commercial projects?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes! All paid plans include commercial usage rights. Create client proposals, business reports, invoices, and any professional documents for your business or clients."
-        }
-      }
-    ]
-  };
-
   return (
     <div className="min-h-screen bg-[#fafafa]">
       {/* Structured Data for SEO */}
@@ -374,140 +289,35 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
       />
 
-      {/* Sign In Prompt Modal */}
-      {showSignInPrompt && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="mx-4 w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-            <h3 className="text-xl font-bold text-slate-900">Sign in to continue</h3>
-            <p className="mt-2 text-sm text-slate-600">
-              You need to sign in before upgrading to the <span className="font-semibold capitalize">{pendingPlan}</span> plan.
-            </p>
-            <div className="mt-6 flex gap-3">
-              <button
-                onClick={() => {
-                  setShowSignInPrompt(false);
-                  setPendingPlan(null);
-                }}
-                className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-              >
-                Cancel
-              </button>
-              <SignInButton mode="modal" forceRedirectUrl={`/?checkout=${pendingPlan}`}>
-                <button className="flex-1 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">
-                  Sign In
-                </button>
-              </SignInButton>
-            </div>
+      {/* Scroll animation init (lightweight client component) */}
+      <ScrollReveal />
+
+      <HeaderWrapper>
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white border border-slate-100 transition-transform group-hover:scale-110 shadow-sm">
+            <Image
+              src="/logo.png"
+              alt="TextFroge Logo"
+              fill
+              className="object-contain p-1.5"
+            />
           </div>
-        </div>
-      )}
-
-      <header className="sticky top-0 z-50 w-full border-b border-slate-200/50 bg-white/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white border border-slate-100 transition-transform group-hover:scale-110 shadow-sm">
-              <Image
-                src="/logo.png"
-                alt="TextFroge Logo"
-                fill
-                className="object-contain p-1.5"
-              />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-slate-900 leading-none">TextFroge</p>
-              <p className="text-[8px] uppercase tracking-[0.2em] text-slate-400 font-bold">Studio</p>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-8 text-[13px] font-semibold text-slate-500 md:flex">
-            <a href="#features" className="hover:text-slate-900 transition-colors">Features</a>
-            <a href="#templates" className="hover:text-slate-900 transition-colors">Templates</a>
-            <a href="#pricing" className="hover:text-slate-900 transition-colors">Pricing</a>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <div className="hidden items-center gap-3 md:flex">
-              <SignedOut>
-                <SignInButton mode="modal">
-                  <button className="text-[13px] font-bold text-slate-600 hover:text-slate-900 transition-colors mr-2">
-                    Sign In
-                  </button>
-                </SignInButton>
-                <Link
-                  className="rounded-full bg-slate-900 px-5 py-2 text-[11px] font-bold uppercase tracking-widest text-white transition hover:bg-slate-700 shadow-sm"
-                  href="/sign-up"
-                >
-                  Join Now
-                </Link>
-              </SignedOut>
-              <SignedIn>
-                <Link
-                  className="rounded-full border border-slate-200 bg-white px-5 py-2 text-[11px] font-bold uppercase tracking-widest text-slate-900 transition hover:bg-slate-50"
-                  href="/dashboard"
-                >
-                  Dashboard
-                </Link>
-                <UserButton afterSignOutUrl="/" />
-              </SignedIn>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 shadow-lg md:hidden"
-            >
-              <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {isMobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
+          <div>
+            <p className="text-sm font-bold text-slate-900 leading-none">TextFroge</p>
+            <p className="text-[8px] uppercase tracking-[0.2em] text-slate-400 font-bold">Studio</p>
           </div>
-        </div>
+        </Link>
 
-        {/* Mobile Menu Overlay */}
-        {isMobileMenuOpen && (
-          <div className="fixed inset-0 top-[72px] z-[60] bg-white border-t border-slate-100 p-6 animate-in slide-in-from-top-4 duration-300 md:hidden shadow-2xl h-[calc(100vh-72px)] overflow-y-auto">
-            <nav className="flex flex-col gap-8 text-xl font-black text-slate-900">
-              <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between">
-                Features <span>→</span>
-              </a>
-              <a href="#templates" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between">
-                Templates <span>→</span>
-              </a>
-              <a href="#pricing" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between">
-                Pricing <span>→</span>
-              </a>
-              <hr className="border-slate-100" />
-              <div className="flex flex-col gap-4 mt-auto">
-                <SignedOut>
-                  <SignInButton mode="modal">
-                    <button className="rounded-2xl border border-slate-200 py-4 text-center font-bold text-slate-600">
-                      Sign In
-                    </button>
-                  </SignInButton>
-                  <Link href="/sign-up" className="rounded-2xl bg-indigo-600 py-4 text-center font-bold text-white shadow-lg shadow-indigo-100">
-                    Get Started Free
-                  </Link>
-                </SignedOut>
-                <SignedIn>
-                  <Link href="/dashboard" className="rounded-2xl bg-slate-900 py-4 text-center font-bold text-white">
-                    Dashboard
-                  </Link>
-                  <div className="flex items-center justify-center gap-3 py-2 bg-slate-50 rounded-xl p-4">
-                    <UserButton afterSignOutUrl="/" showName />
-                  </div>
-                </SignedIn>
-              </div>
-            </nav>
-          </div>
-        )}
-      </header>
+        {/* Desktop Navigation */}
+        <nav className="hidden items-center gap-8 text-[13px] font-semibold text-slate-500 md:flex">
+          <a href="#features" className="hover:text-slate-900 transition-colors">Features</a>
+          <a href="#templates" className="hover:text-slate-900 transition-colors">Templates</a>
+          <a href="#pricing" className="hover:text-slate-900 transition-colors">Pricing</a>
+        </nav>
+      </HeaderWrapper>
 
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-24 px-6 pb-24 pt-16">
+        {/* Hero Section */}
         <section className="flex flex-col items-center text-center gap-8 lg:py-12">
           <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">
             <span className="relative flex h-2 w-2">
@@ -544,23 +354,25 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="features" className="grid gap-12 md:grid-cols-3">
+        {/* Features Section - Fixed: h3 → h2 for proper heading order */}
+        <section id="features" className="grid gap-12 md:grid-cols-3" aria-label="Features">
           {features.map((feature) => (
             <div
               key={feature.title}
               className="flex flex-col gap-4"
             >
               <div className="h-1 w-12 bg-slate-900 rounded-full" />
-              <h3 className="text-xl font-bold text-slate-900">
+              <h2 className="text-xl font-bold text-slate-900">
                 {feature.title}
-              </h3>
-              <p className="text-sm leading-relaxed text-slate-500">
+              </h2>
+              <p className="text-sm leading-relaxed text-slate-600">
                 {feature.detail}
               </p>
             </div>
           ))}
         </section>
 
+        {/* Templates Section */}
         <section id="templates" className="space-y-12 py-12">
           <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
@@ -585,7 +397,6 @@ export default function Home() {
                   {/* Decorative background flair */}
                   <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/5 blur-2xl" />
                   <div className="absolute -bottom-12 -left-12 h-44 w-44 rounded-full bg-white/5 blur-3xl" />
-
                   {tpl.elements}
                 </div>
 
@@ -601,6 +412,7 @@ export default function Home() {
                     <Link
                       href={`/dashboard?template=${tpl.id}`}
                       className="text-xs font-bold text-slate-900 hover:underline"
+                      aria-label={`Use the ${tpl.name} template`}
                     >
                       Use Template →
                     </Link>
@@ -624,7 +436,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="grid gap-6 md:grid-cols-3">
+        {/* How it works */}
+        <section className="grid gap-6 md:grid-cols-3" aria-label="How it works">
           {[
             {
               title: "1. Upload inputs",
@@ -651,182 +464,27 @@ export default function Home() {
           ))}
         </section>
 
-        <section id="pricing" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {/* Starter Plan */}
-          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white/70 p-4 transition hover:shadow-lg">
-            <div className="flex-1">
-              <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500">Starter</p>
-              <p className="mt-2 flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-slate-900">₹0</span>
-                <span className="text-[10px] text-slate-500">/mo</span>
-              </p>
-              <ul className="mt-4 space-y-2 text-[10px] text-slate-600">
-                <li className="flex gap-2">✅ <span>10 PDFs / mo</span></li>
-                <li className="flex gap-2">✅ <span>Basic layout</span></li>
-                <li className="flex gap-2 font-medium text-amber-600">⚠️ Watermark</li>
-              </ul>
-            </div>
-            <Link
-              href="/dashboard"
-              className="mt-6 inline-flex w-full justify-center rounded-lg bg-slate-900 px-3 py-2 text-[10px] font-bold text-white transition hover:bg-slate-700"
-            >
-              Get Started
-            </Link>
-          </div>
+        {/* Pricing — client component with checkout logic */}
+        <PricingSection />
 
-          {/* Creator Plan */}
-          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-lg">
-            <div className="flex-1">
-              <p className="text-[9px] font-bold uppercase tracking-widest text-blue-600">Creator</p>
-              <p className="mt-2 flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-slate-900">₹149</span>
-                <span className="text-[10px] text-slate-500">/mo</span>
-              </p>
-              <ul className="mt-4 space-y-2 text-[10px] text-slate-600">
-                <li className="flex gap-2">✅ <span>Unlimited PDFs</span></li>
-                <li className="flex gap-2">✅ <span>5 templates</span></li>
-                <li className="flex gap-2">✅ <span>No watermark</span></li>
-              </ul>
-            </div>
-            <button
-              onClick={() => handleCheckout('creator')}
-              className="mt-6 inline-flex w-full justify-center rounded-lg border border-slate-900 px-3 py-1.5 text-[10px] font-bold text-slate-900 transition hover:bg-slate-900 hover:text-white"
-            >
-              Go Creator
-            </button>
-          </div>
-
-          {/* Pro Plan */}
-          <div className="relative flex flex-col rounded-2xl border-2 border-slate-900 bg-slate-900 p-4 text-white shadow-xl transition hover:scale-[1.02]">
-            <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-300 px-2 py-0.5 text-[8px] font-bold uppercase tracking-tight text-slate-900 whitespace-nowrap">
-              Best Value
-            </div>
-            <div className="flex-1">
-              <p className="text-[9px] font-bold uppercase tracking-widest text-amber-300">Pro Editor</p>
-              <p className="mt-2 flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-white">₹399</span>
-                <span className="text-[10px] text-slate-400">/mo</span>
-              </p>
-              <ul className="mt-4 space-y-2 text-[10px] text-slate-300">
-                <li className="flex gap-2">✅ <span>Everything Creator</span></li>
-                <li className="flex gap-2">✅ <span>15+ templates</span></li>
-                <li className="flex gap-2">✅ <span>Custom branding</span></li>
-              </ul>
-            </div>
-            <button
-              onClick={() => handleCheckout('pro')}
-              className="mt-6 inline-flex w-full justify-center rounded-lg bg-white px-3 py-2 text-[10px] font-bold text-slate-900 transition hover:bg-slate-100"
-            >
-              Upgrade to Pro
-            </button>
-          </div>
-
-          {/* Business Plan */}
-          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white/70 p-4 transition hover:shadow-lg">
-            <div className="flex-1">
-              <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500">Business</p>
-              <p className="mt-2 flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-slate-900">₹1199</span>
-                <span className="text-[10px] text-slate-500">/mo</span>
-              </p>
-              <ul className="mt-4 space-y-2 text-[10px] text-slate-600">
-                <li className="flex gap-2">✅ <span>API access</span></li>
-                <li className="flex gap-2">✅ <span>5 Team seats</span></li>
-                <li className="flex gap-2">✅ <span>Priority SLA</span></li>
-              </ul>
-            </div>
-            <button
-              onClick={() => handleCheckout('business')}
-              className="mt-6 inline-flex w-full justify-center rounded-lg border border-slate-200 px-3 py-1.5 text-[10px] font-semibold text-slate-700 hover:border-slate-300 transition"
-            >
-              Contact Team
-            </button>
-          </div>
-
-          {/* Lifetime Plan */}
-          <div className="flex flex-col rounded-2xl border border-slate-200 bg-gradient-to-br from-indigo-50 to-white p-4 transition hover:shadow-lg">
-            <div className="flex-1">
-              <div className="flex items-center gap-1.5">
-                <p className="text-[9px] font-bold uppercase tracking-widest text-indigo-600">Lifetime</p>
-                <span className="rounded bg-indigo-100 px-1 py-0.5 text-[7px] font-bold text-indigo-700 uppercase">Legacy</span>
-              </div>
-              <p className="mt-2 flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-slate-900">₹1,999</span>
-                <span className="text-[8px] font-bold text-slate-400 uppercase">Once</span>
-              </p>
-              <ul className="mt-4 space-y-2 text-[10px] text-slate-600">
-                <li className="flex gap-2">✅ <span>Forever Access</span></li>
-                <li className="flex gap-2">✅ <span>All basic updates</span></li>
-                <li className="flex gap-2">✅ <span>No monthly fee</span></li>
-              </ul>
-            </div>
-            <button
-              onClick={() => handleCheckout('lifetime')}
-              className="mt-6 inline-flex w-full justify-center rounded-lg bg-indigo-600 px-3 py-2 text-[10px] font-bold text-white transition hover:bg-indigo-700 shadow-md shadow-indigo-100"
-            >
-              Buy Lifetime
-            </button>
-          </div>
-        </section>
-
-        {/* FAQ Section for SEO */}
-        <section className="space-y-8 py-12">
+        {/* FAQ Section */}
+        <section className="space-y-8 py-12" aria-label="Frequently Asked Questions">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-slate-900">Frequently Asked Questions</h2>
             <p className="mt-2 text-slate-600">Everything you need to know about TextForge Studio</p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <h3 className="text-lg font-bold text-slate-900">Is TextForge Studio really free?</h3>
-              <p className="mt-2 text-sm text-slate-600">
-                Yes! Our Starter plan is completely free and includes 10 PDF exports per month with basic templates.
-                Upgrade to unlock unlimited exports, premium templates, and AI formatting features.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <h3 className="text-lg font-bold text-slate-900">What types of PDFs can I create?</h3>
-              <p className="mt-2 text-sm text-slate-600">
-                Create resumes, invoices, reports, academic papers, technical documentation, contracts, letters,
-                and more with 15+ professional templates. Convert text to PDF or images to PDF instantly.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <h3 className="text-lg font-bold text-slate-900">How does the AI formatting work?</h3>
-              <p className="mt-2 text-sm text-slate-600">
-                Our AI analyzes your content and automatically formats it according to your chosen template.
-                It handles headings, spacing, typography, and layout to create professional-looking documents instantly.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <h3 className="text-lg font-bold text-slate-900">Can I customize the templates?</h3>
-              <p className="mt-2 text-sm text-slate-600">
-                Absolutely! Customize fonts, colors, add your logo, and adjust layouts. Pro and Business plans
-                offer advanced branding options to match your company&apos;s visual identity perfectly.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <h3 className="text-lg font-bold text-slate-900">Is my data secure?</h3>
-              <p className="mt-2 text-sm text-slate-600">
-                Yes! All documents are processed securely, and we never store your content without permission.
-                Your privacy and data security are our top priorities.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <h3 className="text-lg font-bold text-slate-900">Can I use this for commercial projects?</h3>
-              <p className="mt-2 text-sm text-slate-600">
-                Yes! All paid plans include commercial usage rights. Create client proposals, business reports,
-                invoices, and any professional documents for your business or clients.
-              </p>
-            </div>
+            {faqItems.map((faq) => (
+              <div key={faq.question} className="rounded-2xl border border-slate-200 bg-white p-6">
+                <h3 className="text-lg font-bold text-slate-900">{faq.question}</h3>
+                <p className="mt-2 text-sm text-slate-600">{faq.answer}</p>
+              </div>
+            ))}
           </div>
         </section>
 
+        {/* CTA Section */}
         <section className="rounded-3xl border border-slate-200 bg-white/80 p-8 text-center shadow-sm">
           <h2 className="text-3xl font-semibold text-slate-900">
             Ready to ship your next PDF in minutes?
@@ -842,6 +500,8 @@ export default function Home() {
             Launch the generator
           </Link>
         </section>
+
+        {/* Footer */}
         <footer className="mt-20 border-t border-slate-100 py-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-2">
@@ -856,7 +516,7 @@ export default function Home() {
               <p className="text-sm font-bold text-slate-900 uppercase tracking-widest leading-none mt-1">TextFroge</p>
             </div>
             <div className="flex gap-8 text-xs font-semibold text-slate-500">
-              <a href="#templates" className="hover:text-slate-900 transition font-bold">Templates</a>
+              <a href="#templates" className="hover:text-slate-900 transition font-bold" aria-label="Browse template gallery">Templates</a>
               <Link href="/api-docs" className="hover:text-slate-900 transition font-bold">API Docs</Link>
               <Link href="/terms" className="hover:text-slate-900 transition">Terms</Link>
               <Link href="/privacy" className="hover:text-slate-900 transition">Privacy</Link>
